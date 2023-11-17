@@ -115,7 +115,7 @@ public final class BetterRanks extends JavaPlugin {
             }
 
             long expiryTime = System.currentTimeMillis();
-            pluginLogger.debug("BetterRanksCommandHandler: addPlayerRank: checkin if player has a rank");
+            pluginLogger.debug("BetterRanksCommandHandler: addPlayerRank: checking if player has a rank");
             // Check if player already has the same rank
             if (rank.equals(currentRank)) {
                 pluginLogger.debug("BetterRanksCommandHandler: addPlayerRank: Player "+playerName+" already has "+rank+" rank, extending for next "+additionalTime);

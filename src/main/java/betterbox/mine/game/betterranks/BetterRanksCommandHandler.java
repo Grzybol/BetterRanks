@@ -36,7 +36,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                         plugin.pluginLogger.severe("BetterRanksCommandHandler: onCommand: exception while converting username to UUID: "+e.getMessage()+ " "+e);
                     }
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: calling getRemainingTimeFormatted with "+uuid);
-                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + datam.getRemainingTimeFormatted(uuid));
+                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + datam.getRemainingTimeFormatted(uuid));
                 }else {
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender "+sender+" dont have permission to use /br tl");
                     sender.sendMessage("You don't have permission to use this command!");
@@ -130,7 +130,8 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             int timeAmount = plugin.dataManager.getCodesConfig().getInt(code + ".timeAmount");
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeAmount "+timeAmount+" for code "+code);
             char timeUnit = ' '; // Domyślna wartość, jeśli konwersja zawiedzie
-            plugin.dataManager.checkCode(code);
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
+            plugin.dataManager.useCode(code);
 
             try {
                 String timeUnitStr = plugin.dataManager.getCodesConfig().getString(code + ".timeUnit");
@@ -153,10 +154,10 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnit);
             plugin.addPlayerRank(playerName, rank, timeAmount, timeUnit);
             plugin.pluginLogger.info("Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnit + ".");
-            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + "Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnit + ".");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnit + ".");
 
         } else {
-            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA +"Invalid or expired code.");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA +" Invalid or expired code.");
             plugin.pluginLogger.info("Player "+sender+" used wrong or expired code");
 
         }
