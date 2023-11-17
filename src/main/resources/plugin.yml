@@ -11,6 +11,8 @@ commands:
       /<command> tl
       /<command> code <code>
     aliases: [betranks, setrank]
+  info:
+    description: Plugin info.
   add:
     usage:
       /<command> add <player> <rank> <amount> <s/m/d>

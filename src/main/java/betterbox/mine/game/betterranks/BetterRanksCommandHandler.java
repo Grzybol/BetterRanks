@@ -24,6 +24,11 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand called");
         DataManager datam = new DataManager(plugin,plugin.pluginLogger);
         if (command.getName().equalsIgnoreCase("br")) {
+            if(args.length == 1 && args[0].equals("info")){
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Better Ranks system for BetterBox.");
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Author: " + plugin.getDescription().getAuthors());
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Version: " + plugin.getDescription().getVersion());
+            }
             if(args.length == 1 && args[0].equals("tl")) {
                 plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: /br tl called");
                 plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender: "+sender+" sender.getName(): "+sender.getName()+" "+sender.toString());

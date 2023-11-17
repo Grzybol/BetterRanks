@@ -1,5 +1,5 @@
 name: BetterRanks
-version: '2.1.0-SNAPSHOT'
+version: '3.0.0-SNAPSHOT'
 main: betterbox.mine.game.betterranks.BetterRanks
 api-version: '1.18'
 author: 'grzybol'
@@ -11,6 +11,8 @@ commands:
       /<command> tl
       /<command> code <code>
     aliases: [betranks, setrank]
+  info:
+    description: Plugin info.
   add:
     usage:
       /<command> add <player> <rank> <amount> <s/m/d>
