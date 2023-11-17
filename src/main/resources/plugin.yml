@@ -6,14 +6,48 @@ author: 'grzybol'
 
 commands:
   br:
-    description: Set, modify or delete player ranks.
+    description: Manage player ranks and codes.
     usage: |
-      /<command> add <player> <rank> <days>
-      /<command> delete <player>
+      /<command> tl
+      /<command> code <code>
     aliases: [betranks, setrank]
-    permission: betterranks.command.br
+  add:
+    usage:
+      /<command> add <player> <rank> <amount> <s/m/d>
+    description: Add a rank to a player.
+    permission: betterranks.command.add
+  delete:
+    usage:
+      /<command> delete <player>
+    description: Delete a player's rank.
+    permission: betterranks.command.delete
+  createcode:
+    description: Create codes for ranks.
+    permission: betterranks.command.createcode
+  code:
+    description: Use a code.
+    permission: betterranks.command.code
+  tl:
+    description: Check remaining time.
+    permission: betterranks.command.tl
 
 permissions:
   betterranks.command.br:
     description: Allows usage of the /br command.
     default: op
+  betterranks.command.add:
+    description: Allows adding a rank to a player.
+    default: op
+  betterranks.command.delete:
+    description: Allows deleting a player's rank.
+    default: op
+  betterranks.command.createcode:
+    description: Allows creating codes for ranks.
+    default: op
+  betterranks.command.code:
+    description: Allows reedeming the code.
+    default: op
+  betterranks.command.tl:
+    description: Allows to check remaining time.
+    default: op
+

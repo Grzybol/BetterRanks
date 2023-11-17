@@ -2,6 +2,8 @@ package betterbox.mine.game.betterranks;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.*;
 
 public class PluginLogger {
@@ -9,24 +11,25 @@ public class PluginLogger {
     private final Logger logger;
     private FileHandler fileHandler;
 
-    public PluginLogger(BetterRanks plugin) {
+    public PluginLogger(BetterRanks plugin, String folderPath) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date date = new Date();
         this.logger = Logger.getLogger(plugin.getName());
         this.logger.setUseParentHandlers(false);
-        createLogDirectory(plugin);
+        createLogDirectory(folderPath);
 
         try {
-            String logFilePath = plugin.getDataFolder().getAbsolutePath() + "/logs/" + plugin.getName() + ".log";
+            String logFilePath = folderPath + "/logs/" + plugin.getName() + "_"+formatter.format(date)+".log";
             fileHandler = new FileHandler(logFilePath, true);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fileHandler.setFormatter(formatter);
+            fileHandler.setFormatter(new CustomFormatter(plugin.getName()));
             logger.addHandler(fileHandler);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void createLogDirectory(BetterRanks plugin) {
-        File logDir = new File(plugin.getDataFolder(), "logs");
+    private void createLogDirectory(String folderPath) {
+        File logDir = new File(folderPath, "logs");
         if (!logDir.exists()) {
             logDir.mkdirs();
         }
@@ -49,6 +52,20 @@ public class PluginLogger {
     }
 
     private void log(Level level, String message) {
-        logger.log(level, message);
+        logger.log(level, "[" + level + "] " + message);
+    }
+
+    static class CustomFormatter extends Formatter {
+        private final String pluginName;
+
+        public CustomFormatter(String pluginName) {
+            this.pluginName = pluginName;
+        }
+
+        @Override
+        public String format(LogRecord record) {
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(record.getMillis()));
+            return "[" + pluginName + "][" + timeStamp + "] " + formatMessage(record) + "\n";
+        }
     }
 }

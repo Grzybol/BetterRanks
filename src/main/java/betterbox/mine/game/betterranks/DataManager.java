@@ -14,7 +14,7 @@ public class DataManager {
 
     private final JavaPlugin plugin;
     private FileConfiguration dataConfig;
-    private File configFile;
+    private File dataFile;
     private final PluginLogger pluginLogger;
     private FileConfiguration codesConfig;
     private File codesFile;
@@ -25,6 +25,43 @@ public class DataManager {
         this.pluginLogger = pluginLogger;
         setup();
     }
+    // Metoda, która zwraca pozostały czas dla danego UUID w formacie "xx d xx m xx s"
+    public String getRemainingTimeFormatted(UUID uuid) {
+        pluginLogger.debug("DataManager: getRemainingTimeFormatted: called UUID "+uuid);
+        long expiryTime = getExpiryTime(uuid);
+        pluginLogger.debug("DataManager: getRemainingTimeFormatted: expiryTime " +expiryTime);
+        if (expiryTime == -1) {
+            return "No expiry time set"; // Lub inną wiadomość wskazującą, że czas wygaśnięcia nie jest ustawiony
+
+        }
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime >= expiryTime) {
+            return "Expired"; // Lub inną wiadomość, jeśli czas wygaśnięcia już minął
+        }
+
+        long remainingTime = expiryTime - currentTime;
+        long seconds = remainingTime / 1000 % 60;
+        long minutes = remainingTime / (60 * 1000) % 60;
+        long hours = remainingTime / (60 * 60 * 1000) % 24;
+        long days = remainingTime / (24 * 60 * 60 * 1000);
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) {
+            sb.append(days).append(" d ");
+        }
+        if (hours > 0) {
+            sb.append(hours).append(" h ");
+        }
+        if (minutes > 0) {
+            sb.append(minutes).append(" m ");
+        }
+        if (seconds > 0) {
+            sb.append(seconds).append(" s");
+        }
+
+        return "Rank expires in "+sb.toString().trim();
+    }
 
     public void setup() {
         if (!plugin.getDataFolder().exists()) {
@@ -34,19 +71,19 @@ public class DataManager {
         }
 
 
-        configFile = new File(plugin.getDataFolder(), "database.yml");
-        if (!configFile.exists()) {
+        dataFile = new File(plugin.getDataFolder(), "database.yml");
+        if (!dataFile.exists()) {
             pluginLogger.warn("DataManager: setup: Database file does not exist");
             try {
-                configFile.createNewFile();
+                dataFile.createNewFile();
                 pluginLogger.debug("DataManager: setup: Database file created");
             } catch (IOException e) {
-                plugin.getLogger().severe("Could not create database.yml file!");
+                plugin.getLogger().severe("DataManager: setup:Could not create database.yml file!");
                 e.printStackTrace();
             }
         }
 
-        dataConfig = YamlConfiguration.loadConfiguration(configFile);
+        dataConfig = YamlConfiguration.loadConfiguration(dataFile);
         pluginLogger.debug("DataManager: setup: Database file loaded");
         // Setting up the second database for codes
         codesFile = new File(plugin.getDataFolder(), "codes.yml");
@@ -54,7 +91,7 @@ public class DataManager {
             try {
                 codesFile.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().severe("Could not create codes.yml file!");
+                plugin.getLogger().severe("DataManager: setup:Could not create codes.yml file!");
                 e.printStackTrace();
             }
         }
@@ -88,22 +125,31 @@ public class DataManager {
     public FileConfiguration getCodesConfig() {
         return codesConfig;
     }
+    public boolean checkCode(String code) {
+        if (codesConfig.contains(code))return true;
 
-    public boolean useCode(String code) {
-        if (codesConfig.contains(code)) {
-            codesConfig.set(code, null); // Remove code after use
-            saveCodes();
-            return true;
-        }
         return false;
+    }
+    public boolean useCode(String code) {
+        pluginLogger.debug("DataManager: useCode called");
+
+            pluginLogger.debug("DataManager: useCode: code "+ code+" found in the database.");
+            codesConfig.set(code, null); // Remove code after use
+            pluginLogger.debug("DataManager: useCode: code "+ code+" has just been used and removed from the database.");
+            saveCodes();
+            pluginLogger.debug("DataManager: useCode: return true");
+            return true;
+
     }
 
     public void saveCodes() {
+        pluginLogger.debug("DataManager: saveCodes called");
         try {
+            pluginLogger.debug("DataManager: saveCodes: saving");
             codesConfig.save(codesFile);
+            pluginLogger.debug("DataManager: saveCodes: saving");
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not save codes to codes.yml!");
-            e.printStackTrace();
+            plugin.getLogger().severe("DataManager: saveCodes: "+e.getMessage()+ " "+e);
         }
     }
 
@@ -114,7 +160,7 @@ public class DataManager {
 
     public void saveData() {
         try {
-            dataConfig.save(configFile);
+            dataConfig.save(dataFile);
         } catch (IOException e) {
             plugin.getLogger().severe("Could not save data to database.yml!");
             pluginLogger.debug("DataManager: saveData: Player " +e);
@@ -123,7 +169,7 @@ public class DataManager {
     }
 
     public void reloadData() {
-        dataConfig = YamlConfiguration.loadConfiguration(configFile);
+        dataConfig = YamlConfiguration.loadConfiguration(dataFile);
     }
 
     // Get the expiry time for the given UUID. Returns -1 if not set.
@@ -136,12 +182,18 @@ public class DataManager {
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time) {
+        pluginLogger.debug("DataManager: setExpiryTime: called, setting "+time+" for "+uuid);
         dataConfig.set(uuid.toString(), time);
+        pluginLogger.debug("DataManager: setExpiryTime: calling DataManager.saveData()");
+        saveData();
     }
 
     // Remove the data for the given UUID.
     public void removePlayerData(UUID uuid) {
+        pluginLogger.debug("DataManager: removePlayerData: called");
         dataConfig.set(uuid.toString(), null);
+        pluginLogger.debug("DataManager: removePlayerData: calling DataManager.saveData()");
+        saveData();
     }
 
     // Get all UUIDs stored in the database.
