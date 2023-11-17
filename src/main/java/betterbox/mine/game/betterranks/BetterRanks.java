@@ -83,33 +83,49 @@ public final class BetterRanks extends JavaPlugin {
 
     void addPlayerRank(String playerName, String rank, int time, char timeUnit) {
         try {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank);
-
             // Get UUID from playerName
             UUID playerUUID = Bukkit.getPlayer(playerName).getUniqueId();
+            String currentRank = usersConfig.getString("users." + playerUUID + ".group");
 
-            long expiryTime = System.currentTimeMillis();
+            long additionalTime;
             switch (timeUnit) {
                 case 's':
-                    expiryTime += time * 1000L;
+                    additionalTime = time * 1000L;
                     break;
                 case 'm':
-                    expiryTime += time * 60000L;
+                    additionalTime = time * 60000L;
                     break;
                 case 'd':
-                    expiryTime += time * 86400000L;
+                    additionalTime = time * 86400000L;
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid time unit: " + timeUnit);
             }
 
-            // Set expiry time using UUID
+            long expiryTime = System.currentTimeMillis();
+
+            // Check if player already has the same rank
+            if (rank.equals(currentRank)) {
+                long currentExpiryTime = dataManager.getExpiryTime(playerUUID);
+                // Extend the expiry time if the player already has the rank
+                expiryTime = Math.max(expiryTime, currentExpiryTime) + additionalTime;
+            } else {
+                // If the player has a different rank, set new expiry time
+                expiryTime += additionalTime;
+                // Update the player's rank
+                usersConfig.set("users." + playerUUID + ".group", rank);
+                // Uncomment the line below if you wish to use the 'manuadd' command
+                // Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank + " world");
+            }
+
+            // Set or update the expiry time in DataManager
             dataManager.setExpiryTime(playerUUID, expiryTime);
-            pluginLogger.info("Rank added successfully for " + playerName);
+            pluginLogger.info("Rank updated successfully for " + playerName);
         } catch (Exception e) {
             pluginLogger.severe("BetterRanks: addPlayerRank: " + e);
         }
     }
+
 
 
     @Override

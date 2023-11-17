@@ -41,7 +41,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             if (args.length == 2 && args[0].equals("delete")) {
                 return handleDeleteCommand(sender, args);
             }
-            if (args.length == 4 && args[0].equalsIgnoreCase("br")) {
+            if (args.length == 5 && args[0].equals("add")) {
                 try {
                     String playerName = args[1];
                     String rank = args[2];

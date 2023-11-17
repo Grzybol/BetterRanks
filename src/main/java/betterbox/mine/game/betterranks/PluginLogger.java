@@ -1,16 +1,35 @@
 package betterbox.mine.game.betterranks;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.*;
 
 public class PluginLogger {
 
-    private final String prefix;
     private final Logger logger;
+    private FileHandler fileHandler;
 
     public PluginLogger(BetterRanks plugin) {
-        this.logger = plugin.getLogger();
-        this.prefix = "[" + plugin.getName() + "]";
+        this.logger = Logger.getLogger(plugin.getName());
+        this.logger.setUseParentHandlers(false);
+        createLogDirectory(plugin);
+
+        try {
+            String logFilePath = plugin.getDataFolder().getAbsolutePath() + "/logs/" + plugin.getName() + ".log";
+            fileHandler = new FileHandler(logFilePath, true);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
+            logger.addHandler(fileHandler);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createLogDirectory(BetterRanks plugin) {
+        File logDir = new File(plugin.getDataFolder(), "logs");
+        if (!logDir.exists()) {
+            logDir.mkdirs();
+        }
     }
 
     public void info(String message) {
@@ -26,11 +45,10 @@ public class PluginLogger {
     }
 
     public void debug(String message) {
-        // Możesz dodać warunek, aby logować komunikaty debugowania tylko wtedy, gdy jest włączony tryb debugowania.
         log(Level.INFO, "[DEBUG] " + message);
     }
 
     private void log(Level level, String message) {
-        logger.log(level, prefix + " " + message);
+        logger.log(level, message);
     }
 }

@@ -8,7 +8,7 @@ commands:
   br:
     description: Set, modify or delete player ranks.
     usage: |
-      /<command> <player> <rank> <days>
+      /<command> add <player> <rank> <days>
       /<command> delete <player>
     aliases: [betranks, setrank]
     permission: betterranks.command.br
