@@ -1,0 +1,19 @@
+name: BetterRanks
+version: '2.0.0-SNAPSHOT'
+main: betterbox.mine.game.betterranks.BetterRanks
+api-version: '1.18'
+author: 'grzybol'
+
+commands:
+  br:
+    description: Set, modify or delete player ranks.
+    usage: |
+      /<command> add <player> <rank> <days>
+      /<command> delete <player>
+    aliases: [betranks, setrank]
+    permission: betterranks.command.br
+
+permissions:
+  betterranks.command.br:
+    description: Allows usage of the /br command.
+    default: op
