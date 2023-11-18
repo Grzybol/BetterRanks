@@ -74,6 +74,11 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 return true;
             }
 
+            if (command.getName().equalsIgnoreCase("br")) {
+                if(args.length == 1 && args[0].equals("debug")) {
+                    plugin.pluginLogger.debugBboolStateChange();
+                }
+            }
             // Command for creating codes
             if (args.length >= 4 && args[0].equals("createcode")) {
                 return handleCreateCodeCommand(sender, args);

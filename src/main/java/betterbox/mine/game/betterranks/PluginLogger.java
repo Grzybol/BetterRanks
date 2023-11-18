@@ -11,6 +11,9 @@ public class PluginLogger {
     private final Logger logger;
     private FileHandler fileHandler;
     public boolean debugBool = false;
+    public void debugBboolStateChange(){
+        debugBool=!debugBool;
+    }
 
     public PluginLogger(BetterRanks plugin, String folderPath) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");

@@ -13,6 +13,9 @@ commands:
     aliases: [betranks, setrank]
   info:
     description: Plugin info.
+  debug:
+    description: Toggles debug
+    permission: betterranks.command.debug
   add:
     usage:
       /<command> add <player> <rank> <amount> <s/m/d>
@@ -51,5 +54,8 @@ permissions:
     default: op
   betterranks.command.tl:
     description: Allows to check remaining time.
+    default: op
+  betterranks.command.debug:
+    description: Allows to toggle debug.
     default: op
 
