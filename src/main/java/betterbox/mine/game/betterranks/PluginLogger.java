@@ -12,6 +12,7 @@ public class PluginLogger {
     private FileHandler fileHandler;
     public boolean debugBool = false;
     public void debugBboolStateChange(){
+
         debugBool=!debugBool;
     }
 

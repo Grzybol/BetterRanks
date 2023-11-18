@@ -74,13 +74,15 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 return true;
             }
 
-            if (command.getName().equalsIgnoreCase("br")) {
+
                 if(args.length == 1 && args[0].equals("debug")) {
+                    plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender " + sender + " called /br debug");
                     sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + "DEBUG TOGGLED!!!!");
                     sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + "Current state: "+plugin.pluginLogger.debugBool);
+                    plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: calling plugin.pluginLogger.debugBboolStateChange()");
                     plugin.pluginLogger.debugBboolStateChange();
                 }
-            }
+
             // Command for creating codes
             if (args.length >= 4 && args[0].equals("createcode")) {
                 return handleCreateCodeCommand(sender, args);
