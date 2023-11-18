@@ -12,7 +12,8 @@ import java.util.UUID;
 
 public class BetterRanksCommandHandler implements CommandExecutor {
 
-    private final BetterRanks plugin;
+    private BetterRanks plugin = null;
+
 
     public BetterRanksCommandHandler(BetterRanks plugin) {
 
@@ -22,7 +23,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand called");
-        DataManager datam = new DataManager(plugin,plugin.pluginLogger);
+
         if (command.getName().equalsIgnoreCase("br")) {
             if(args.length == 1 && args[0].equals("info")){
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Better Ranks system for BetterBox.");
@@ -41,7 +42,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                         plugin.pluginLogger.severe("BetterRanksCommandHandler: onCommand: exception while converting username to UUID: "+e.getMessage()+ " "+e);
                     }
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: calling getRemainingTimeFormatted with "+uuid);
-                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + datam.getRemainingTimeFormatted(uuid));
+                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + plugin.dataManager.getRemainingTimeFormatted(uuid));
                 }else {
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender "+sender+" dont have permission to use /br tl");
                     sender.sendMessage("You don't have permission to use this command!");
@@ -121,10 +122,9 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     private boolean handleCodeUsageCommand(CommandSender sender, String code) {
         plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand called");
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.useCode(code) "+code);
+
 
         if (plugin.dataManager.checkCode(code)) {
-
             // Pobierz szczegóły kodu
             String playerName = sender.getName();
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: playerName "+playerName+" for code "+code);
@@ -134,33 +134,28 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: rank "+rank+" for code "+code);
             int timeAmount = plugin.dataManager.getCodesConfig().getInt(code + ".timeAmount");
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeAmount "+timeAmount+" for code "+code);
-            char timeUnit = ' '; // Domyślna wartość, jeśli konwersja zawiedzie
+            String timeUnitStr = plugin.dataManager.getCodesConfig().getString(code + ".timeUnit");
+            char timeUnit = timeUnitStr.charAt(0);; // Domyślna wartość, jeśli konwersja zawiedzie
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
-            plugin.dataManager.useCode(code);
-
-            try {
-                String timeUnitStr = plugin.dataManager.getCodesConfig().getString(code + ".timeUnit");
-                if (timeUnitStr != null && timeUnitStr.length() == 1) {
+            if (timeUnitStr != null && timeUnitStr.length() == 1) {
                     timeUnit = timeUnitStr.charAt(0);
-                } else {
-                    plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format");
+            } else {
+                    plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format "+timeUnitStr);
                     throw new IllegalArgumentException("Invalid time unit format");
 
-                }
-            } catch (Exception e) {
-                plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Exception in parsing timeUnit: " + e.getMessage());
-                // Możesz tutaj zwrócić, przerwać wykonanie funkcji lub obsłużyć błąd w inny sposób
             }
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnit);
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnit);
+
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnitStr);
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnitStr.charAt(0));
             // Zakładając, że 'sender' jest graczem
 
             // Dodaj rangę graczowi
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnit);
-            plugin.addPlayerRank(playerName, rank, timeAmount, timeUnit);
-            plugin.pluginLogger.info("Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnit + ".");
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnitStr.charAt(0));
+            plugin.addPlayerRank(playerName, rank, timeAmount, timeUnitStr.charAt(0));
+            plugin.pluginLogger.info("Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnitStr.charAt(0) + ".");
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnit + ".");
-
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.useCode(code) "+code);
+            plugin.dataManager.useCode(code);
         } else {
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA +" Invalid or expired code.");
             plugin.pluginLogger.info("Player "+sender+" used wrong or expired code");

@@ -1,5 +1,6 @@
 package betterbox.mine.game.betterranks;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -126,9 +127,7 @@ public class DataManager {
         return codesConfig;
     }
     public boolean checkCode(String code) {
-        if (codesConfig.contains(code))return true;
-
-        return false;
+        return codesConfig.contains(code);
     }
     public boolean useCode(String code) {
         pluginLogger.debug("DataManager: useCode called");
@@ -137,6 +136,8 @@ public class DataManager {
             codesConfig.set(code, null); // Remove code after use
             pluginLogger.debug("DataManager: useCode: code "+ code+" has just been used and removed from the database.");
             saveCodes();
+            pluginLogger.debug("DataManager: saveCodes: contains code? "+codesConfig.contains(code));
+
             pluginLogger.debug("DataManager: useCode: return true");
             return true;
 
@@ -147,13 +148,28 @@ public class DataManager {
         try {
             pluginLogger.debug("DataManager: saveCodes: saving");
             codesConfig.save(codesFile);
-            pluginLogger.debug("DataManager: saveCodes: saving");
+            pluginLogger.debug("DataManager: saveCodes: saved, reloading");
+            pluginLogger.debug("DataManager: saveCodes: "+codesConfig);
+            reloadCodeData();
+            pluginLogger.debug("DataManager: saveCodes: "+codesConfig);
+
         } catch (IOException e) {
             plugin.getLogger().severe("DataManager: saveCodes: "+e.getMessage()+ " "+e);
         }
     }
-
-
+    public void reloadCodeData() {
+        pluginLogger.debug("DataManager: reloadCodeData called");
+        codesFile = new File(plugin.getDataFolder(), "codes.yml");
+        codesConfig = YamlConfiguration.loadConfiguration(codesFile);
+        pluginLogger.debug("DataManager: reloadCodeData: "+codesConfig);
+        try {
+            codesConfig.load(codesFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public FileConfiguration getData() {
         return dataConfig;
     }
@@ -169,6 +185,7 @@ public class DataManager {
     }
 
     public void reloadData() {
+
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
     }
 

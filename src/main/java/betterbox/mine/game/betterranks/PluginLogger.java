@@ -10,6 +10,7 @@ public class PluginLogger {
 
     private final Logger logger;
     private FileHandler fileHandler;
+    public boolean debugBool = false;
 
     public PluginLogger(BetterRanks plugin, String folderPath) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -48,10 +49,11 @@ public class PluginLogger {
     }
 
     public void debug(String message) {
-        log(Level.INFO, "[DEBUG] " + message);
+        log(Level.CONFIG, "[DEBUG] " + message);
     }
 
     private void log(Level level, String message) {
+        if (level != Level.CONFIG || debugBool)
         logger.log(level, "[" + level + "] " + message);
     }
 
