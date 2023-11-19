@@ -79,8 +79,8 @@ public class DataManager {
                 dataFile.createNewFile();
                 pluginLogger.debug("DataManager: setup: Database file created");
             } catch (IOException e) {
-                plugin.getLogger().severe("DataManager: setup:Could not create database.yml file!");
-                e.printStackTrace();
+                plugin.getLogger().severe("DataManager: setup:Could not create database.yml file!"+e.getMessage());
+
             }
         }
 
@@ -165,8 +165,10 @@ public class DataManager {
         try {
             codesConfig.load(codesFile);
         } catch (IOException e) {
+            pluginLogger.debug("DataManager: reloadCodeData: "+e.getMessage());
             throw new RuntimeException(e);
         } catch (InvalidConfigurationException e) {
+            pluginLogger.debug("DataManager: reloadCodeData: "+e.getMessage());
             throw new RuntimeException(e);
         }
     }

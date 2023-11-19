@@ -78,9 +78,9 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 if(args.length == 1 && args[0].equals("debug")) {
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender " + sender + " called /br debug");
                     sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + "DEBUG TOGGLED!!!!");
-                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + "Current state: "+plugin.pluginLogger.debugBool);
+                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + "Current state: ");
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: calling plugin.pluginLogger.debugBboolStateChange()");
-                    plugin.pluginLogger.debugBboolStateChange();
+                    //plugin.pluginLogger.debugBboolStateChange();
                 }
 
             // Command for creating codes

@@ -16,11 +16,13 @@ public final class BetterRanks extends JavaPlugin {
     PluginLogger pluginLogger;
     FileConfiguration usersConfig;
     DataManager dataManager;
+    ConfigManager configManager;
 
     @Override
     public void onEnable() {
         pluginLogger = new PluginLogger(this,getDataFolder().getAbsolutePath());
         dataManager = new DataManager(this, pluginLogger);
+        configManager = new ConfigManager(this, pluginLogger);
 
         // Set the command executor to the new command handler class
         this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this));

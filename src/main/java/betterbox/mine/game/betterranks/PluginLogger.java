@@ -4,17 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.logging.*;
 
 public class PluginLogger {
 
     private final Logger logger;
     private FileHandler fileHandler;
-    public boolean debugBool = false;
-    public void debugBboolStateChange(){
-
-        debugBool=!debugBool;
-    }
+    private boolean debugMode = false;
 
     public PluginLogger(BetterRanks plugin, String folderPath) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -40,6 +37,10 @@ public class PluginLogger {
         }
     }
 
+    public void toggleDebugMode() {
+        debugMode = !debugMode;
+    }
+
     public void info(String message) {
         log(Level.INFO, message);
     }
@@ -53,12 +54,13 @@ public class PluginLogger {
     }
 
     public void debug(String message) {
-        log(Level.CONFIG, "[DEBUG] " + message);
+        if (debugMode) {
+            log(Level.CONFIG, "[DEBUG] " + message);
+        }
     }
 
     private void log(Level level, String message) {
-        if (level != Level.CONFIG || debugBool)
-        logger.log(level, "[" + level + "] " + message);
+        logger.log(level, "[" + level.getLocalizedName() + "] " + message);
     }
 
     static class CustomFormatter extends Formatter {
@@ -74,4 +76,22 @@ public class PluginLogger {
             return "[" + pluginName + "][" + timeStamp + "] " + formatMessage(record) + "\n";
         }
     }
+    public enum LogLevel {
+        INFO, WARNING, SEVERE, CONFIG, DEBUG
+    }
+
+    public void setEnabledLogLevels(Set<LogLevel> levels) {
+        // Ustaw filtr dla Loggera
+        logger.setFilter(new Filter() {
+            @Override
+            public boolean isLoggable(LogRecord record) {
+                // Sprawdź czy poziom logowania rekordu jest włączony
+                if (levels.contains(LogLevel.valueOf(record.getLevel().getName()))) {
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
 }
