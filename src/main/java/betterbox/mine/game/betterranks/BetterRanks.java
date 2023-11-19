@@ -38,7 +38,7 @@ public final class BetterRanks extends JavaPlugin {
                 usersFile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
-                pluginLogger.severe("Could not create users.yml: " + e.getMessage());
+                pluginLogger.error("Could not create users.yml: " + e.getMessage());
             }
         }
         usersConfig = YamlConfiguration.loadConfiguration(usersFile);
@@ -74,7 +74,7 @@ public final class BetterRanks extends JavaPlugin {
             try {
                 usersConfig.save(usersFile);
             } catch (IOException e) {
-                pluginLogger.severe("BetterRanks: checkRankExpiry: "+e);
+                pluginLogger.error("BetterRanks: checkRankExpiry: "+e);
             }
         }
     }
@@ -90,7 +90,7 @@ public final class BetterRanks extends JavaPlugin {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
 
         } catch (IOException e) {
-            pluginLogger.severe("BetterRanks: removePlayerRank: "+e);
+            pluginLogger.error("BetterRanks: removePlayerRank: "+e);
         }
     }
 
@@ -147,7 +147,7 @@ public final class BetterRanks extends JavaPlugin {
             dataManager.setExpiryTime(playerUUID, expiryTime);
             pluginLogger.info("Rank updated successfully for " + playerName);
         } catch (Exception e) {
-            pluginLogger.severe("BetterRanks: addPlayerRank: " + e);
+            pluginLogger.error("BetterRanks: addPlayerRank: " + e);
         }
     }
 

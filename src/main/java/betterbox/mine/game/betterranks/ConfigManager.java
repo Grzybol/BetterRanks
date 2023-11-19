@@ -47,7 +47,7 @@ public class ConfigManager {
                 pluginLogger.debug("ConfigManager: initializeConfigFile: Config file already exists.");
             }
         } catch (Exception e) {
-            pluginLogger.severe("ConfigManager: initializeConfigFile: " + e.getMessage());
+            pluginLogger.error("ConfigManager: initializeConfigFile: " + e.getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ public class ConfigManager {
             Files.write(Paths.get(configFile.toURI()), lines);
             pluginLogger.info("Config file updated successfully.");
         } catch (IOException e) {
-            pluginLogger.severe("Error while updating config file: " + e.getMessage());
+            pluginLogger.error("Error while updating config file: " + e.getMessage());
         }
     }
 }

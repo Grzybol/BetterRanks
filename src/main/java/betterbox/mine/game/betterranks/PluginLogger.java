@@ -49,7 +49,7 @@ public class PluginLogger {
         log(Level.WARNING, message);
     }
 
-    public void severe(String message) {
+    public void error(String message) {
         log(Level.SEVERE, message);
     }
 

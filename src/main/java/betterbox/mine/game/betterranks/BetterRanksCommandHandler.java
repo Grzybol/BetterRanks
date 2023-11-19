@@ -74,7 +74,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 try {
                     uuid = Bukkit.getPlayer(sender.getName()).getUniqueId();
                 } catch (Exception e) {
-                    plugin.pluginLogger.severe("BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
+                    plugin.pluginLogger.error("BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
                 }
                 plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: calling getRemainingTimeFormatted with " + uuid);
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + plugin.dataManager.getRemainingTimeFormatted(uuid));
@@ -101,7 +101,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                         sender.sendMessage("You don't have permission to use this command!");
                     }
                 } catch (Exception e) {
-                    plugin.pluginLogger.severe("BetterRanksCommandHandler: onCommand: exception while checking permissions: " + e.getMessage() + " " + e);
+                    plugin.pluginLogger.error("BetterRanksCommandHandler: onCommand: exception while checking permissions: " + e.getMessage() + " " + e);
                 }
             }
         }
