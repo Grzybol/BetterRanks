@@ -1,8 +1,10 @@
 package betterbox.mine.game.betterranks;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -99,21 +101,30 @@ public class DataManager {
 
         codesConfig = YamlConfiguration.loadConfiguration(codesFile);
     }
+    public String getPoolNameForCode(String code) {
+        if (codesConfig.contains(code)) {
+            return codesConfig.getString(code + ".pool");
+        }
+        return null; // Zwróć null, jeśli kod nie istnieje
+    }
 
     // Generate and store unique codes
-    public void generateCodes(int numberOfCodes, String rank, int timeAmount, char timeUnit) {
+    public void generateCodes(int numberOfCodes, String rank, int timeAmount, char timeUnit, String poolName) {
         for (int i = 0; i < numberOfCodes; i++) {
             String code;
             do {
-                code = generateRandomCode(8); // Generate a random 8 character code
+                code = generateRandomCode(8);
             } while (codesConfig.contains(code));
 
+            codesConfig.set(code + ".pool", poolName);
             codesConfig.set(code + ".rank", rank);
             codesConfig.set(code + ".timeAmount", timeAmount);
             codesConfig.set(code + ".timeUnit", String.valueOf(timeUnit));
         }
         saveCodes();
     }
+
+
 
     private String generateRandomCode(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -129,19 +140,41 @@ public class DataManager {
     public boolean checkCode(String code) {
         return codesConfig.contains(code);
     }
-    public boolean useCode(String code) {
-        pluginLogger.debug("DataManager: useCode called");
-
-            pluginLogger.debug("DataManager: useCode: code "+ code+" found in the database.");
-            codesConfig.set(code, null); // Remove code after use
-            pluginLogger.debug("DataManager: useCode: code "+ code+" has just been used and removed from the database.");
-            saveCodes();
-            pluginLogger.debug("DataManager: saveCodes: contains code? "+codesConfig.contains(code));
-
-            pluginLogger.debug("DataManager: useCode: return true");
-            return true;
-
+    public String getOnlinePlayerNameByUUID(UUID uuid) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            return player.getName(); // Zwraca nick gracza
+        } else {
+            return null; // Gracz nie jest online lub nie istnieje
+        }
     }
+    public boolean useCode(UUID playerUuid, String code) {
+        if (codesConfig.contains(code)) {
+            String poolName = codesConfig.getString(code + ".pool");
+
+            // Sprawdzamy, czy gracz już użył kodu z tej pule
+            if (dataConfig.contains(playerUuid.toString() + ".usedPools." + poolName)) {
+                pluginLogger.info("Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+                return false; // Gracz już użył kodu z tej pule
+            }
+
+            // Usuwamy kod po użyciu
+            codesConfig.set(code, null);
+
+            // Rejestrujemy, że gracz użył kodu z tej pule
+            dataConfig.set(playerUuid.toString() + ".usedPools." + poolName, true);
+            pluginLogger.debug("DataManager: useCode: calling saveCodes()");
+            saveCodes();
+            pluginLogger.debug("DataManager: useCode: calling saveData()");
+            saveData();
+            pluginLogger.info("Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+            return true;
+        }
+        pluginLogger.debug("BetterRanksCommandHandler: handleAddCommand: playerUuid " + playerUuid + " used wrong code "+code);
+        return false; // Kod nie istnieje
+    }
+
+
 
     public void saveCodes() {
         pluginLogger.debug("DataManager: saveCodes called");
