@@ -24,8 +24,10 @@ public class DataManager {
     private final Random random = new Random();
 
     public DataManager(JavaPlugin plugin,PluginLogger pluginLogger) {
+        pluginLogger.debug("DataManager called");
         this.plugin = plugin;
         this.pluginLogger = pluginLogger;
+        pluginLogger.debug("DataManager: calling setup()");
         setup();
     }
     // Metoda, która zwraca pozostały czas dla danego UUID w formacie "xx d xx m xx s"
@@ -67,6 +69,7 @@ public class DataManager {
     }
 
     public void setup() {
+        pluginLogger.debug("DataManager: setup called");
         if (!plugin.getDataFolder().exists()) {
             pluginLogger.warn("DataManager: setup: Folder does not exist");
             plugin.getDataFolder().mkdir();

@@ -12,23 +12,45 @@ public class ConfigManager {
     private PluginLogger pluginLogger;
 
     public ConfigManager(JavaPlugin plugin, PluginLogger pluginLogger) {
+        pluginLogger.debug("ConfigManager called");
         this.plugin = plugin;
         this.pluginLogger = pluginLogger;
+        pluginLogger.debug("ConfigManager: calling initializeConfigFile()");
         initializeConfigFile();
         configureLogger();
     }
 
     private void initializeConfigFile() {
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        pluginLogger.debug("ConfigManager: initializeConfigFile called");
+        try {
+            File configFile = new File(plugin.getDataFolder(), "config.yml");
 
-        if (!configFile.exists()) {
-            pluginLogger.info("Config file does not exist, creating a new one.");
-            plugin.saveDefaultConfig(); // This will create the config.yml with default values
-            pluginLogger.info("Default config file created successfully.");
-        } else {
-            pluginLogger.info("Config file already exists.");
+            if (!configFile.exists()) {
+                pluginLogger.info("Config file does not exist, creating a new one.");
+
+                // Create the config.yml file and parent directories
+                configFile.getParentFile().mkdirs();
+                configFile.createNewFile();
+
+                // Define default configuration
+                List<String> defaultConfig = Arrays.asList(
+                        "log_level:",
+                        "- INFO",
+                        "- WARNING",
+                        "- ERROR"
+                );
+
+                // Write default configuration to config.yml
+                Files.write(Paths.get(configFile.toURI()), defaultConfig);
+                pluginLogger.info("Default config file created successfully.");
+            } else {
+                pluginLogger.debug("ConfigManager: initializeConfigFile: Config file already exists.");
+            }
+        } catch (Exception e) {
+            pluginLogger.severe("ConfigManager: initializeConfigFile: " + e.getMessage());
         }
     }
+
 
     private void configureLogger() {
         // Reloads the config in case it was just created
