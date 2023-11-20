@@ -20,11 +20,12 @@ public final class BetterRanks extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        pluginLogger.debug("BetterRanks: onEnable: calling ConfigManager");
+        configManager = new ConfigManager(this, pluginLogger);
         pluginLogger = new PluginLogger(this,getDataFolder().getAbsolutePath());
         pluginLogger.debug("BetterRanks: onEnable: calling DataManager");
         dataManager = new DataManager(this, pluginLogger);
-        pluginLogger.debug("BetterRanks: onEnable: calling ConfigManager");
-        configManager = new ConfigManager(this, pluginLogger);
+
 
         // Set the command executor to the new command handler class
         this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this));
