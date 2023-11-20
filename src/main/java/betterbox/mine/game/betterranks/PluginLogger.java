@@ -11,7 +11,6 @@ public class PluginLogger {
 
     private final Logger logger;
     private FileHandler fileHandler;
-    private boolean debugMode = false;
 
     public PluginLogger(BetterRanks plugin, String folderPath) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -36,11 +35,6 @@ public class PluginLogger {
             logDir.mkdirs();
         }
     }
-
-    public void toggleDebugMode() {
-        debugMode = !debugMode;
-    }
-
     public void info(String message) {
         log(Level.INFO, message);
     }
@@ -54,9 +48,8 @@ public class PluginLogger {
     }
 
     public void debug(String message) {
-        if (debugMode) {
             log(Level.CONFIG, "[DEBUG] " + message);
-        }
+
     }
 
     private void log(Level level, String message) {
