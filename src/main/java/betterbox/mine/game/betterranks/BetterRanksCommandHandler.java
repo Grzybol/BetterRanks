@@ -6,7 +6,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -108,7 +107,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                         return handleCodeUsageCommand(sender, args[1]);
                     } else {
                         plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender " + sender + " dont have permission to use /br code");
-                        sender.sendMessage("You don't have permission to use this command!");
+                        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
                     }
                 } catch (Exception e) {
                     plugin.pluginLogger.error("BetterRanksCommandHandler: onCommand: exception while checking permissions: " + e.getMessage() + " " + e);
@@ -134,6 +133,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 return true;
             }
         }
+        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
         plugin.pluginLogger.debug("BetterRanksCommandHandler: handleAddCommand: sender " + sender + " dont have permission to use /br tl");
 
         return false;
@@ -158,6 +158,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 return true;
             }
         }
+        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
         plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCreateCodeCommand: sender " + sender.getName() + " dont have permission to use /br code");
         return false;
     }
@@ -197,9 +198,12 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnitStr.charAt(0));
             plugin.addPlayerRank(playerName, rank, timeAmount, timeUnitStr.charAt(0));
             plugin.pluginLogger.info("Code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code)+" used successfully by "+playerName+ ". Rank " + rank + " added/extended for next" + timeAmount + timeUnitStr.charAt(0) + ".");
-            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank " + rank + " added for " + timeAmount + timeUnit + ".");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank "+ ChatColor.BOLD + rank +ChatColor.BOLD+" added for "+ChatColor.BOLD+ timeAmount + timeUnit +ChatColor.BOLD+ ".");
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.useCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
-            plugin.dataManager.useCode(playerUUID,code);
+            if(!plugin.dataManager.useCode(playerUUID,code)){
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already used a code from that pool!");
+            }
+
         } else {
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA +" Invalid or expired code.");
             plugin.pluginLogger.info("Player "+sender+" used wrong or expired code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));

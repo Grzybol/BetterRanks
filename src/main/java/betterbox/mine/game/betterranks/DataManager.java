@@ -158,6 +158,7 @@ public class DataManager {
             // Sprawdzamy, czy gracz już użył kodu z tej pule
             if (dataConfig.contains(playerUuid.toString() + ".usedPools." + poolName)) {
                 pluginLogger.info("Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+
                 return false; // Gracz już użył kodu z tej pule
             }
 
