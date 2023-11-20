@@ -24,7 +24,7 @@ public final class BetterRanks extends JavaPlugin {
     public void onEnable() {
         try{
             Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
-            pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels);
+            pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels,this);
             pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: onEnable: calling ConfigManager");
         }catch (Exception e){
             getServer().getLogger().warning("PluginLogger Exception: " + e.getMessage());
@@ -61,6 +61,11 @@ public final class BetterRanks extends JavaPlugin {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: starting scheduler");
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::checkRankExpiry, 0L, 1200L);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: scheduler started");
+        getLogger().info("Enabled");
+        getLogger().info(getDescription().getDescription());
+        getLogger().info("Author: "+getDescription().getAuthors());
+        getLogger().info("Version: "+getDescription().getVersion());
+
     }
 
     private void checkRankExpiry() {

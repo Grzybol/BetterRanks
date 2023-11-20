@@ -3,6 +3,8 @@ version: '${project.version}'
 main: betterbox.mine.game.betterranks.BetterRanks
 api-version: '1.18'
 author: 'grzybol'
+description: 'Plugin for managin ranks'
+depend: [GroupManager]
 
 commands:
   br:

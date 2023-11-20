@@ -22,6 +22,8 @@ public class DataManager {
     private FileConfiguration codesConfig;
     private File codesFile;
     private final Random random = new Random();
+    public String poolName =null;
+    String usedPoolsPath=null;
 
     public DataManager(JavaPlugin plugin,PluginLogger pluginLogger) {
         this.pluginLogger = pluginLogger;
@@ -98,8 +100,7 @@ public class DataManager {
             try {
                 codesFile.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().severe("DataManager: setup:Could not create codes.yml file!");
-                e.printStackTrace();
+                plugin.getLogger().severe("DataManager: setup:Could not create codes.yml file!"+e.getMessage());
             }
         }
 
@@ -114,6 +115,7 @@ public class DataManager {
 
     // Generate and store unique codes
     public void generateCodes(int numberOfCodes, String rank, int timeAmount, char timeUnit, String poolName) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: generateCodes called with parameters: "+numberOfCodes+" "+rank+" "+timeAmount+" "+timeUnit+" "+poolName);
         for (int i = 0; i < numberOfCodes; i++) {
             String code;
             do {
@@ -142,6 +144,7 @@ public class DataManager {
         return codesConfig;
     }
     public boolean checkCode(String code) {
+
         return codesConfig.contains(code);
     }
     public String getOnlinePlayerNameByUUID(UUID uuid) {
@@ -152,17 +155,24 @@ public class DataManager {
             return null; // Gracz nie jest online lub nie istnieje
         }
     }
+    public boolean canUseCode(UUID playerUuid, String code){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: canUseCode called");
+
+        poolName = codesConfig.getString(code + ".pool");
+
+        // Sprawdzamy, czy gracz już użył kodu z tej pule
+        String playerPath = playerUuid.toString();
+        usedPoolsPath = playerPath + ".usedPools." + poolName;
+        if (dataConfig.contains(usedPoolsPath)) {
+            pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+            return false; // Gracz już użył kodu z tej pule
+        }
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: canUseCode true");
+        return true;
+    }
     public boolean useCode(UUID playerUuid, String code) {
         if (codesConfig.contains(code)) {
-            String poolName = codesConfig.getString(code + ".pool");
 
-            // Sprawdzamy, czy gracz już użył kodu z tej pule
-            String playerPath = playerUuid.toString();
-            String usedPoolsPath = playerPath + ".usedPools." + poolName;
-            if (dataConfig.contains(usedPoolsPath)) {
-                pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
-                return false; // Gracz już użył kodu z tej pule
-            }
 
             // Usuwamy kod po użyciu
             codesConfig.set(code, null);
