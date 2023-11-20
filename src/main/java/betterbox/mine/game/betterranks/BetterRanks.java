@@ -3,6 +3,7 @@ package betterbox.mine.game.betterranks;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -70,16 +71,17 @@ public final class BetterRanks extends JavaPlugin {
 
     private void checkRankExpiry() {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: starting scheduled task");
-
+        Player player = null;
         boolean updated = false;
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: requesting all UUIDs");
         for (String uuidStr : dataManager.getAllPlayerUUIDs()) {
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: checking UUID "+uuidStr);
+            //pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: checking UUID "+uuidStr);
             long expiryTime = dataManager.getExpiryTime(UUID.fromString(uuidStr));
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: expiry time for UUID "+expiryTime);
+            //pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: expiry time for UUID "+expiryTime);
 
             if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
-                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: UUID expired, removing rank");
+                player = Bukkit.getPlayer(uuidStr);
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: "+player.getName()+ " expired, removing rank");
                 removePlayerRank(UUID.fromString(uuidStr));
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: changing users.yml GroupManager file");
                 updated = true;
@@ -151,7 +153,7 @@ public final class BetterRanks extends JavaPlugin {
                 // Update the player's rank
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manuadd "+playerName+" "+rank+" world");
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank + " world");
-                usersConfig.set("users." + playerUUID + ".group", rank);
+                //usersConfig.set("users." + playerUUID + ".group", rank);
                 // Uncomment the line below if you wish to use the 'manuadd' command
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
 

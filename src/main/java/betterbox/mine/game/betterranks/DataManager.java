@@ -156,13 +156,13 @@ public class DataManager {
         }
     }
     public boolean canUseCode(UUID playerUuid, String code){
+        Player player = Bukkit.getPlayer(playerUuid);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: canUseCode called");
 
         poolName = codesConfig.getString(code + ".pool");
 
         // Sprawdzamy, czy gracz już użył kodu z tej pule
-        String playerPath = playerUuid.toString();
-        usedPoolsPath = playerPath + ".usedPools." + poolName;
+        usedPoolsPath = player.getName() + ".usedPools." + poolName;
         if (dataConfig.contains(usedPoolsPath)) {
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
             return false; // Gracz już użył kodu z tej pule
@@ -245,7 +245,9 @@ public class DataManager {
 
     // Get the expiry time for the given UUID. Returns -1 if not set.
     public long getExpiryTime(UUID uuid) {
-        String expirationPath = uuid.toString() + ".expiration";
+        Player player = Bukkit.getPlayer(uuid);
+
+        String expirationPath = player.getName() + ".expiration";
         if (dataConfig.contains(expirationPath)) {
             return dataConfig.getLong(expirationPath);
         }
@@ -255,10 +257,12 @@ public class DataManager {
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time) {
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called, setting "+time+" for "+uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called, setting "+time+" for "+player.getName());
+
 
         String playerPath = uuid.toString();
-        String expirationPath = playerPath + ".expiration";
+        String expirationPath = player.getName() + ".expiration";
 
         // Sprawdzenie, czy gracz już istnieje w bazie danych
         if (!dataConfig.contains(playerPath)) {
