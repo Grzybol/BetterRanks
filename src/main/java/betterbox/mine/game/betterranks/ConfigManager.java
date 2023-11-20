@@ -37,7 +37,7 @@ public class ConfigManager {
                         "log_level:",
                         "- INFO",
                         "- WARNING",
-                        "- ERROR"
+                        "- SEVERE"
                 );
 
                 // Write default configuration to config.yml
