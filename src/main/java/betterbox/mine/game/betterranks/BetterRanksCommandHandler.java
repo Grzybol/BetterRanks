@@ -195,13 +195,14 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnitStr);
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnitStr.charAt(0)+" pool "+plugin.dataManager.getPoolNameForCode(code));
-            pluginLogger.log(PluginLogger.LogLevel.INFO,"Code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code)+" used successfully by "+playerName+ ". Rank " + rank + " added/extended for next " + timeAmount + timeUnitStr.charAt(0) + ".");
-            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank "+ ChatColor.BOLD + rank +ChatColor.BOLD+" added for "+ChatColor.BOLD+ timeAmount + timeUnit +ChatColor.BOLD+ ".");
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.useCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
+
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.canUseCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
             if(!plugin.dataManager.canUseCode(playerUUID,code)){
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already used a code from that pool!");
                 return false;
             }else{
+                pluginLogger.log(PluginLogger.LogLevel.INFO,"Code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code)+" used successfully by "+playerName+ ". Rank " + rank + " added/extended for next " + timeAmount + timeUnitStr.charAt(0) + ".");
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank "+ ChatColor.BOLD + rank +ChatColor.BOLD+" added for "+ChatColor.BOLD+ timeAmount + timeUnit +ChatColor.BOLD+ ".");
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnitStr.charAt(0));
                 plugin.addPlayerRank(playerName, rank, timeAmount, timeUnitStr.charAt(0));
                 plugin.dataManager.useCode(playerUUID,code);

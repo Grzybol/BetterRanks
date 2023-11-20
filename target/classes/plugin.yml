@@ -1,8 +1,10 @@
 name: BetterRanks
-version: '4.3.2-SNAPSHOT'
+version: '4.3.4-SNAPSHOT'
 main: betterbox.mine.game.betterranks.BetterRanks
 api-version: '1.18'
 author: 'grzybol'
+description: 'Plugin for managin ranks'
+depend: [GroupManager]
 
 commands:
   br:
