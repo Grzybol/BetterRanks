@@ -74,6 +74,7 @@ public class ConfigManager {
 
         // Set active logging levels in the logger
         pluginLogger.setEnabledLogLevels(enabledLogLevels);
+        pluginLogger.info("Enabled log levels: "+ Arrays.toString(enabledLogLevels.toArray()));
     }
 
     public void updateConfig(String configuration) {
