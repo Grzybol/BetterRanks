@@ -10,20 +10,30 @@ import java.util.*;
 public class ConfigManager {
     private JavaPlugin plugin;
     private final PluginLogger pluginLogger;
-    Set<PluginLogger.LogLevel> enabledLogLevels = EnumSet.noneOf(PluginLogger.LogLevel.class);
-
+    private File configFile = null;
+    List<String> logLevels = null;
 
     public ConfigManager(JavaPlugin plugin, PluginLogger pluginLogger) {
+
         this.plugin = plugin;
         this.pluginLogger = pluginLogger;
+        configFile = new File(plugin.getDataFolder(), "config.yml");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: calling configureLogger");
         configureLogger();
     }
 
     private void configureLogger() {
-        // Odczytanie ustawień log_level z pliku konfiguracyjnego
-        List<String> logLevels = plugin.getConfig().getStringList("log_level");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: configureLogger called");
+        if (!configFile.exists()) {
+            pluginLogger.log(PluginLogger.LogLevel.WARNING, "Config file does not exist, creating new one.");
+            try {
+                configFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         Set<PluginLogger.LogLevel> enabledLogLevels;
-
         if (logLevels == null || logLevels.isEmpty()) {
             // Jeśli konfiguracja nie określa poziomów logowania, użyj domyślnych ustawień
             enabledLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
@@ -39,6 +49,9 @@ public class ConfigManager {
                 }
             }
         }
+        // Odczytanie ustawień log_level z pliku konfiguracyjnego
+        logLevels = plugin.getConfig().getStringList("log_level");
+
 
         // Ustawienie aktywnych poziomów logowania w loggerze
         pluginLogger.setEnabledLogLevels(enabledLogLevels);
@@ -46,12 +59,9 @@ public class ConfigManager {
 
     public void updateConfig(String configuration) {
 
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
 
-        if (!configFile.exists()) {
-            pluginLogger.log(PluginLogger.LogLevel.WARNING, "Config file does not exist, creating new one.");
-            plugin.saveDefaultConfig();
-        }
+
+
 
         try {
             List<String> lines = Files.readAllLines(Paths.get(configFile.toURI()));

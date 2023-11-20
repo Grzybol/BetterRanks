@@ -22,13 +22,20 @@ public final class BetterRanks extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        //pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: calling ConfigManager");
-        Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO,PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
-        pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels);
-        configManager = new ConfigManager(this,pluginLogger);
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: calling DataManager");
+        try{
+            Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
+            pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: onEnable: calling ConfigManager");
+        }catch (Exception e){
+            getServer().getLogger().warning("PluginLogger Exception: " + e.getMessage());
+        }
+        try{
+        configManager = new ConfigManager(this, pluginLogger);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: onEnable: calling DataManager");
+    }catch (Exception e){
+        getServer().getLogger().warning("configManager Exception: " + e.getMessage());
+    }
         dataManager = new DataManager(this, pluginLogger);
-
 
         // Set the command executor to the new command handler class
         this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this,pluginLogger));

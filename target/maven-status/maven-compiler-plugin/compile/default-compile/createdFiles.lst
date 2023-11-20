@@ -1,8 +1,6 @@
 betterbox\mine\game\betterranks\BetterRanksCommandHandler.class
 betterbox\mine\game\betterranks\DataManager.class
-betterbox\mine\game\betterranks\PluginLogger$CustomFormatter.class
 betterbox\mine\game\betterranks\PluginLogger$LogLevel.class
 betterbox\mine\game\betterranks\ConfigManager.class
 betterbox\mine\game\betterranks\BetterRanks.class
-betterbox\mine\game\betterranks\PluginLogger$1.class
 betterbox\mine\game\betterranks\PluginLogger.class
