@@ -29,15 +29,19 @@ public class ConfigManager {
             pluginLogger.log(PluginLogger.LogLevel.WARNING, "Config file does not exist, creating new one.");
             try {
                 configFile.createNewFile();
+                updateConfig("log_level:\n  - INFO\n  - WARNING\n  - ERROR");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+        // Odczytanie ustawień log_level z pliku konfiguracyjnego
+        logLevels = plugin.getConfig().getStringList("log_level");
         Set<PluginLogger.LogLevel> enabledLogLevels;
         if (logLevels == null || logLevels.isEmpty()) {
             // Jeśli konfiguracja nie określa poziomów logowania, użyj domyślnych ustawień
             enabledLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
             updateConfig("log_level:\n  - INFO\n  - WARNING\n  - ERROR");
+
         } else {
             enabledLogLevels = new HashSet<>();
             for (String level : logLevels) {
@@ -58,11 +62,6 @@ public class ConfigManager {
     }
 
     public void updateConfig(String configuration) {
-
-
-
-
-
         try {
             List<String> lines = Files.readAllLines(Paths.get(configFile.toURI()));
 

@@ -157,17 +157,20 @@ public class DataManager {
             String poolName = codesConfig.getString(code + ".pool");
 
             // Sprawdzamy, czy gracz już użył kodu z tej pule
-            if (dataConfig.contains(playerUuid.toString() + ".usedPools." + poolName)) {
+            String playerPath = playerUuid.toString();
+            String usedPoolsPath = playerPath + ".usedPools." + poolName;
+            if (dataConfig.contains(usedPoolsPath)) {
                 pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
-
                 return false; // Gracz już użył kodu z tej pule
             }
 
             // Usuwamy kod po użyciu
             codesConfig.set(code, null);
 
-            // Rejestrujemy, że gracz użył kodu z tej pule
-            dataConfig.set(playerUuid.toString() + ".usedPools." + poolName, true);
+            // Dodajemy informację, że gracz użył kodu z tej pule
+            dataConfig.set(usedPoolsPath, true);
+
+            // Zapisujemy zmiany
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveCodes()");
             saveCodes();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveData()");
@@ -178,6 +181,7 @@ public class DataManager {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleAddCommand: playerUuid " + playerUuid + " used wrong code "+code);
         return false; // Kod nie istnieje
     }
+
 
 
 
@@ -231,19 +235,35 @@ public class DataManager {
 
     // Get the expiry time for the given UUID. Returns -1 if not set.
     public long getExpiryTime(UUID uuid) {
-        if (dataConfig.contains(uuid.toString())) {
-            return dataConfig.getLong(uuid.toString());
+        String expirationPath = uuid.toString() + ".expiration";
+        if (dataConfig.contains(expirationPath)) {
+            return dataConfig.getLong(expirationPath);
         }
-        return -1;
+        return -1; // Zwraca -1, jeśli czas wygaśnięcia nie jest ustawiony
     }
+
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time) {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called, setting "+time+" for "+uuid);
-        dataConfig.set(uuid.toString(), time);
+
+        String playerPath = uuid.toString();
+        String expirationPath = playerPath + ".expiration";
+
+        // Sprawdzenie, czy gracz już istnieje w bazie danych
+        if (!dataConfig.contains(playerPath)) {
+            // Jeśli gracz nie istnieje, tworzymy bazową strukturę
+            dataConfig.createSection(playerPath);
+            dataConfig.createSection(playerPath + ".usedPools"); // Pusta sekcja dla przyszłych pul kodów
+        }
+
+        // Ustawienie lub aktualizacja czasu wygaśnięcia
+        dataConfig.set(expirationPath, time);
+
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: calling DataManager.saveData()");
         saveData();
     }
+
 
     // Remove the data for the given UUID.
     public void removePlayerData(UUID uuid) {

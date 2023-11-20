@@ -158,7 +158,7 @@ public final class BetterRanks extends JavaPlugin {
             dataManager.setExpiryTime(playerUUID, expiryTime);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank updated successfully for " + playerName);
         } catch (Exception e) {
-            pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: addPlayerRank: " + e);
+            pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: addPlayerRank: " + e.getMessage());
         }
     }
 
@@ -170,7 +170,7 @@ public final class BetterRanks extends JavaPlugin {
         try {
             usersConfig.save(usersFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: onDisable: " + e.getMessage());
         }
 
         // Save data to DataManager
