@@ -132,6 +132,9 @@ public final class BetterRanks extends JavaPlugin {
                 case 'm':
                     additionalTime = time * 60000L;
                     break;
+                case 'h':
+                    additionalTime = time * 3600000L;
+                    break;
                 case 'd':
                     additionalTime = time * 86400000L;
                     break;

@@ -291,27 +291,31 @@ public class DataManager {
 
         // Przechodzimy przez wszystkich graczy w bazie danych
         for (String playerName : dataConfig.getKeys(false)) {
-            String playerPath = playerName + ".usedPools";
-            if (dataConfig.contains(playerPath)) {
-                Set<String> usedPools = dataConfig.getConfigurationSection(playerPath).getKeys(false);
+            try{
+                String playerPath = playerName + ".usedPools";
+                if (dataConfig.contains(playerPath)) {
+                    Set<String> usedPools = dataConfig.getConfigurationSection(playerPath).getKeys(false);
 
-                for (String pool : usedPools) {
-                    boolean poolHasCodes = false;
+                    for (String pool : usedPools) {
+                        boolean poolHasCodes = false;
 
-                    // Sprawdzamy, czy jakiekolwiek kody z tego pool'a są jeszcze dostępne
-                    for (String code : codesConfig.getKeys(false)) {
-                        if (codesConfig.getString(code + ".pool").equals(pool)) {
-                            poolHasCodes = true;
-                            break;
+                        // Sprawdzamy, czy jakiekolwiek kody z tego pool'a są jeszcze dostępne
+                        for (String code : codesConfig.getKeys(false)) {
+                            if (codesConfig.getString(code + ".pool").equals(pool)) {
+                                poolHasCodes = true;
+                                break;
+                            }
+                        }
+
+                        // Jeśli pool nie ma już dostępnych kodów, usuwamy go z listy użytych pooli gracza
+                        if (!poolHasCodes) {
+                            dataConfig.set(playerPath + "." + pool, null);
+                            pluginLogger.log(PluginLogger.LogLevel.INFO, "DataManager: checkAndCleanUpPools: No available codes in pool " + pool + " for player " + playerName + ". Pool removed.");
                         }
                     }
-
-                    // Jeśli pool nie ma już dostępnych kodów, usuwamy go z listy użytych pooli gracza
-                    if (!poolHasCodes) {
-                        dataConfig.set(playerPath + "." + pool, null);
-                        pluginLogger.log(PluginLogger.LogLevel.INFO,"DataManager: checkAndCleanUpPools: No available codes in pool " + pool + " for player " + playerName + ". Pool removed.");
-                    }
                 }
+            }catch (Exception e) {
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG, "[ERROR] DataManager: checkAndCleanUpPools: Data saved after pool cleanup");
             }
         }
 
