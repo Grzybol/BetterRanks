@@ -24,17 +24,18 @@ public class DataManager {
     private final Random random = new Random();
 
     public DataManager(JavaPlugin plugin,PluginLogger pluginLogger) {
-        pluginLogger.debug("DataManager called");
-        this.plugin = plugin;
         this.pluginLogger = pluginLogger;
-        pluginLogger.debug("DataManager: calling setup()");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager called");
+        this.plugin = plugin;
+
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: calling setup()");
         setup();
     }
     // Metoda, która zwraca pozostały czas dla danego UUID w formacie "xx d xx m xx s"
     public String getRemainingTimeFormatted(UUID uuid) {
-        pluginLogger.debug("DataManager: getRemainingTimeFormatted: called UUID "+uuid);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getRemainingTimeFormatted: called UUID "+uuid);
         long expiryTime = getExpiryTime(uuid);
-        pluginLogger.debug("DataManager: getRemainingTimeFormatted: expiryTime " +expiryTime);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getRemainingTimeFormatted: expiryTime " +expiryTime);
         if (expiryTime == -1) {
             return "No expiry time set"; // Lub inną wiadomość wskazującą, że czas wygaśnięcia nie jest ustawiony
 
@@ -69,20 +70,20 @@ public class DataManager {
     }
 
     public void setup() {
-        pluginLogger.debug("DataManager: setup called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setup called");
         if (!plugin.getDataFolder().exists()) {
-            pluginLogger.warn("DataManager: setup: Folder does not exist");
+            pluginLogger.log(PluginLogger.LogLevel.WARNING,"DataManager: setup: Folder does not exist");
             plugin.getDataFolder().mkdir();
-            pluginLogger.debug("DataManager: setup: Folder created");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setup: Folder created");
         }
 
 
         dataFile = new File(plugin.getDataFolder(), "database.yml");
         if (!dataFile.exists()) {
-            pluginLogger.warn("DataManager: setup: Database file does not exist");
+            pluginLogger.log(PluginLogger.LogLevel.WARNING,"DataManager: setup: Database file does not exist");
             try {
                 dataFile.createNewFile();
-                pluginLogger.debug("DataManager: setup: Database file created");
+                pluginLogger.log(PluginLogger.LogLevel.WARNING,"DataManager: setup: Database file created");
             } catch (IOException e) {
                 plugin.getLogger().severe("DataManager: setup:Could not create database.yml file!"+e.getMessage());
 
@@ -90,7 +91,7 @@ public class DataManager {
         }
 
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
-        pluginLogger.debug("DataManager: setup: Database file loaded");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setup: Database file loaded");
         // Setting up the second database for codes
         codesFile = new File(plugin.getDataFolder(), "codes.yml");
         if (!codesFile.exists()) {
@@ -157,7 +158,7 @@ public class DataManager {
 
             // Sprawdzamy, czy gracz już użył kodu z tej pule
             if (dataConfig.contains(playerUuid.toString() + ".usedPools." + poolName)) {
-                pluginLogger.info("Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+                pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
 
                 return false; // Gracz już użył kodu z tej pule
             }
@@ -167,45 +168,45 @@ public class DataManager {
 
             // Rejestrujemy, że gracz użył kodu z tej pule
             dataConfig.set(playerUuid.toString() + ".usedPools." + poolName, true);
-            pluginLogger.debug("DataManager: useCode: calling saveCodes()");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveCodes()");
             saveCodes();
-            pluginLogger.debug("DataManager: useCode: calling saveData()");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveData()");
             saveData();
-            pluginLogger.info("Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+            pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool");
             return true;
         }
-        pluginLogger.debug("BetterRanksCommandHandler: handleAddCommand: playerUuid " + playerUuid + " used wrong code "+code);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleAddCommand: playerUuid " + playerUuid + " used wrong code "+code);
         return false; // Kod nie istnieje
     }
 
 
 
     public void saveCodes() {
-        pluginLogger.debug("DataManager: saveCodes called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveCodes called");
         try {
-            pluginLogger.debug("DataManager: saveCodes: saving");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveCodes: saving");
             codesConfig.save(codesFile);
-            pluginLogger.debug("DataManager: saveCodes: saved, reloading");
-            pluginLogger.debug("DataManager: saveCodes: "+codesConfig);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveCodes: saved, reloading");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveCodes: "+codesConfig);
             reloadCodeData();
-            pluginLogger.debug("DataManager: saveCodes: "+codesConfig);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveCodes: "+codesConfig);
 
         } catch (IOException e) {
             plugin.getLogger().severe("DataManager: saveCodes: "+e.getMessage()+ " "+e);
         }
     }
     public void reloadCodeData() {
-        pluginLogger.debug("DataManager: reloadCodeData called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: reloadCodeData called");
         codesFile = new File(plugin.getDataFolder(), "codes.yml");
         codesConfig = YamlConfiguration.loadConfiguration(codesFile);
-        pluginLogger.debug("DataManager: reloadCodeData: "+codesConfig);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: reloadCodeData: "+codesConfig);
         try {
             codesConfig.load(codesFile);
         } catch (IOException e) {
-            pluginLogger.debug("DataManager: reloadCodeData: "+e.getMessage());
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: reloadCodeData: "+e.getMessage());
             throw new RuntimeException(e);
         } catch (InvalidConfigurationException e) {
-            pluginLogger.debug("DataManager: reloadCodeData: "+e.getMessage());
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: reloadCodeData: "+e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -218,9 +219,9 @@ public class DataManager {
             dataConfig.save(dataFile);
         } catch (IOException e) {
             plugin.getLogger().severe("Could not save data to database.yml!");
-            pluginLogger.debug("DataManager: saveData: Player " +e);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveData: Player " +e);
         }
-        pluginLogger.debug("DataManager: saveData: Data saved");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveData: Data saved");
     }
 
     public void reloadData() {
@@ -238,17 +239,17 @@ public class DataManager {
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time) {
-        pluginLogger.debug("DataManager: setExpiryTime: called, setting "+time+" for "+uuid);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called, setting "+time+" for "+uuid);
         dataConfig.set(uuid.toString(), time);
-        pluginLogger.debug("DataManager: setExpiryTime: calling DataManager.saveData()");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: calling DataManager.saveData()");
         saveData();
     }
 
     // Remove the data for the given UUID.
     public void removePlayerData(UUID uuid) {
-        pluginLogger.debug("DataManager: removePlayerData: called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: called");
         dataConfig.set(uuid.toString(), null);
-        pluginLogger.debug("DataManager: removePlayerData: calling DataManager.saveData()");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: calling DataManager.saveData()");
         saveData();
     }
 

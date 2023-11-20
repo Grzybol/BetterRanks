@@ -1,6 +1,8 @@
 package betterbox.mine.game.betterranks;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,82 +11,64 @@ import java.util.logging.*;
 
 public class PluginLogger {
 
-    private final Logger logger;
-    private FileHandler fileHandler;
+    private final File logFile;
+    private Set<LogLevel> enabledLogLevels; // Zbiór aktywnych poziomów logowania
 
-    public PluginLogger(BetterRanks plugin, String folderPath) {
+    // Enumeracja dla poziomów logowania
+    public enum LogLevel {
+        INFO, WARNING, ERROR, DEBUG
+    }
+
+    public PluginLogger(String folderPath, Set<LogLevel> enabledLogLevels) {
+        this.enabledLogLevels = enabledLogLevels;
+
+        // Tworzenie folderu dla logów, jeśli nie istnieje
+        File logFolder = new File(folderPath,"logs");
+        if (!logFolder.exists()) {
+            logFolder.mkdirs();
+        }
+
+        // Utworzenie obiektu File dla pliku logów
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date date = new Date();
-        this.logger = Logger.getLogger(plugin.getName());
-        this.logger.setUseParentHandlers(false);
-        createLogDirectory(folderPath);
+        String fileName = formatter.format(date) + ".log";
+        logFile = new File(logFolder, fileName);
 
         try {
-            String logFilePath = folderPath + "/logs/" + plugin.getName() + "_"+formatter.format(date)+".log";
-            fileHandler = new FileHandler(logFilePath, true);
-            fileHandler.setFormatter(new CustomFormatter(plugin.getName()));
-            logger.addHandler(fileHandler);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void createLogDirectory(String folderPath) {
-        File logDir = new File(folderPath, "logs");
-        if (!logDir.exists()) {
-            logDir.mkdirs();
-        }
-    }
-    public void info(String message) {
-        log(Level.INFO, message);
-    }
-
-    public void warn(String message) {
-        log(Level.WARNING, message);
-    }
-
-    public void error(String message) {
-        log(Level.SEVERE, message);
-    }
-
-    public void debug(String message) {
-            log(Level.CONFIG, "[DEBUG] " + message);
-
-    }
-
-    private void log(Level level, String message) {
-        logger.log(level, "[" + level.getLocalizedName() + "] " + message);
-    }
-
-    static class CustomFormatter extends Formatter {
-        private final String pluginName;
-
-        public CustomFormatter(String pluginName) {
-            this.pluginName = pluginName;
-        }
-
-        @Override
-        public String format(LogRecord record) {
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(record.getMillis()));
-            return "[" + pluginName + "][" + timeStamp + "] " + formatMessage(record) + "\n";
-        }
-    }
-    public enum LogLevel {
-        INFO, WARNING, SEVERE, CONFIG, DEBUG
-    }
-
-    public void setEnabledLogLevels(Set<LogLevel> levels) {
-        // Ustaw filtr dla Loggera
-        logger.setFilter(new Filter() {
-            @Override
-            public boolean isLoggable(LogRecord record) {
-                // Sprawdź czy poziom logowania rekordu jest włączony
-                if (levels.contains(LogLevel.valueOf(record.getLevel().getName()))) {
-                    return true;
-                }
-                return false;
+            // Jeśli plik nie istnieje, to go utworzymy
+            if (!logFile.exists()) {
+                logFile.createNewFile();
             }
-        });
+        } catch (IOException e) {
+            e.printStackTrace(); // Tu można użyć loggera serwera do zalogowania błędu
+        }
     }
+
+    // Metoda do logowania z domyślnym poziomem INFO
+    public void log(String message) {
+        log(LogLevel.INFO, message);
+    }
+
+    // Metoda do logowania z określonym poziomem
+    public void log(LogLevel level, String message) {
+        if (enabledLogLevels.contains(level)) {
+            // Dodanie timestampu i poziomu logowania do wiadomości
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            String logMessage = timestamp + " [" + level + "] - " + message;
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
+                writer.write(logMessage);
+                writer.newLine();
+            } catch (IOException e) {
+                e.printStackTrace(); // Tu można użyć loggera serwera do zalogowania błędu
+            }
+        }
+    }
+
+    // Metoda do ustawiania aktywnych poziomów logowania
+    public void setEnabledLogLevels(Set<LogLevel> enabledLogLevels) {
+        this.enabledLogLevels = enabledLogLevels;
+    }
+
 
 }

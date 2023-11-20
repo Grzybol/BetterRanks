@@ -15,16 +15,18 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     private final BetterRanks plugin;
     public String poolName = null;
+    private final PluginLogger pluginLogger;
 
 
-    public BetterRanksCommandHandler(BetterRanks plugin) {
-
+    public BetterRanksCommandHandler(BetterRanks plugin,PluginLogger pluginLogger) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler called");
         this.plugin = plugin;
+        this.pluginLogger = pluginLogger;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: onCommand called");
 
         if (!command.getName().equalsIgnoreCase("br")) {
             return false;
@@ -58,7 +60,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     // Metody obsługujące różne podkomendy
     private boolean handleInfoCommand(CommandSender sender) {
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleInfoCommand called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleInfoCommand called");
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Better Ranks system for BetterBox.");
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Author: " + plugin.getDescription().getAuthors());
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Version: " + plugin.getDescription().getVersion());
@@ -66,7 +68,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br tl " + ChatColor.GREEN + " - returns time left on your rank");
 
         if(sender.isOp()){
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleInfoCommand: "+sender.getName()+" is OP "+sender.isOp());
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleInfoCommand: "+sender.getName()+" is OP "+sender.isOp());
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br delete <nick> " + ChatColor.GREEN + " - set player's rank to Player");
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br add <nick> <rank> <time_amount> <s/m/d> " + ChatColor.GREEN + " - set player's rank for given time");
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br createcode <quantity> <rank> <time_amount> <s/m/d> <pool_name> " + ChatColor.GREEN + " - create codes for ranks under given pool name. Each user can redeem only one code per pool.");
@@ -76,41 +78,41 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     private boolean handleTlCommand(CommandSender sender) {
         if(sender.hasPermission("betterranks.command.tl")){
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand called");
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: sender: " + sender + " sender.getName(): " + sender.getName());
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand called");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender: " + sender + " sender.getName(): " + sender.getName());
             if (sender.hasPermission("betterranks.command.tl")) {
                 UUID uuid = null;
                 try {
                     uuid = Objects.requireNonNull(Bukkit.getPlayer(sender.getName())).getUniqueId();
                 } catch (Exception e) {
-                    plugin.pluginLogger.error("BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
+                    pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
                 }
-                plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: calling getRemainingTimeFormatted with " + uuid);
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: calling getRemainingTimeFormatted with " + uuid);
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + plugin.dataManager.getRemainingTimeFormatted(uuid));
             } else {
-                plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
                 sender.sendMessage("You don't have permission to use this command!");
             }
             return true;
         }
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
         return false;
     }
 
     private boolean handleCodeCommand(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             {
-                plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: /br code called");
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: onCommand: /br code called");
                 try {
                     if (sender.hasPermission("betterranks.command.code")) {
-                        plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: calling handleCodeUsageCommand with parameters: " + sender + " " + args[1]);
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: onCommand: calling handleCodeUsageCommand with parameters: " + sender + " " + args[1]);
                         return handleCodeUsageCommand(sender, args[1]);
                     } else {
-                        plugin.pluginLogger.debug("BetterRanksCommandHandler: onCommand: sender " + sender + " dont have permission to use /br code");
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: onCommand: sender " + sender + " dont have permission to use /br code");
                         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
                     }
                 } catch (Exception e) {
-                    plugin.pluginLogger.error("BetterRanksCommandHandler: onCommand: exception while checking permissions: " + e.getMessage() + " " + e);
+                    pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanksCommandHandler: onCommand: exception while checking permissions: " + e.getMessage() + " " + e);
                 }
             }
         }
@@ -119,7 +121,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     private boolean handleAddCommand(CommandSender sender, String[] args) {
         if(sender.hasPermission("betterranks.command.add")){
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleAddCommand called with parameters " + sender.getName() + " " + Arrays.toString(args));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleAddCommand called with parameters " + sender.getName() + " " + Arrays.toString(args));
             try {
                 String playerName = args[1];
                 String rank = args[2];
@@ -134,7 +136,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             }
         }
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleAddCommand: sender " + sender + " dont have permission to use /br tl");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleAddCommand: sender " + sender + " dont have permission to use /br tl");
 
         return false;
     }
@@ -142,7 +144,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     private boolean handleCreateCodeCommand(CommandSender sender, String[] args) {
         if(sender.hasPermission("betterranks.command.createcode")) {
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCreateCodeCommand called by " + sender.getName() + " " + Arrays.toString(args));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCreateCodeCommand called by " + sender.getName() + " " + Arrays.toString(args));
             try {
                 int numberOfCodes = Integer.parseInt(args[1]);
                 String rank = args[2];
@@ -159,12 +161,12 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             }
         }
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCreateCodeCommand: sender " + sender.getName() + " dont have permission to use /br code");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCreateCodeCommand: sender " + sender.getName() + " dont have permission to use /br code");
         return false;
     }
 
     private boolean handleCodeUsageCommand(CommandSender sender, String code) {
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand called");
 
 
         if (plugin.dataManager.checkCode(code)) {
@@ -172,41 +174,41 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             UUID playerUUID = player.getUniqueId();
             // Pobierz szczegóły kodu
             String playerName = sender.getName();
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: playerName "+playerName+" for code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: playerName "+playerName+" for code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
 
             String rank = plugin.dataManager.getCodesConfig().getString(code + ".rank");
 
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: rank "+rank+" for code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: rank "+rank+" for code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
             int timeAmount = plugin.dataManager.getCodesConfig().getInt(code + ".timeAmount");
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeAmount "+timeAmount+" for code "+code);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: timeAmount "+timeAmount+" for code "+code);
             String timeUnitStr = plugin.dataManager.getCodesConfig().getString(code + ".timeUnit");
             char timeUnit; // Domyślna wartość, jeśli konwersja zawiedzie
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
             if (timeUnitStr.length() == 1) {
                     timeUnit = timeUnitStr.charAt(0);
             } else {
-                    plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format "+timeUnitStr);
+                    pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format "+timeUnitStr);
                     throw new IllegalArgumentException("Invalid time unit format");
 
             }
 
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnitStr);
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnitStr.charAt(0)+" pool "+plugin.dataManager.getPoolNameForCode(code));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnitStr);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnitStr.charAt(0)+" pool "+plugin.dataManager.getPoolNameForCode(code));
             // Zakładając, że 'sender' jest graczem
 
             // Dodaj rangę graczowi
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnitStr.charAt(0));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnitStr.charAt(0));
             plugin.addPlayerRank(playerName, rank, timeAmount, timeUnitStr.charAt(0));
-            plugin.pluginLogger.info("Code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code)+" used successfully by "+playerName+ ". Rank " + rank + " added/extended for next" + timeAmount + timeUnitStr.charAt(0) + ".");
+            pluginLogger.log(PluginLogger.LogLevel.INFO,"Code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code)+" used successfully by "+playerName+ ". Rank " + rank + " added/extended for next" + timeAmount + timeUnitStr.charAt(0) + ".");
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank "+ ChatColor.BOLD + rank +ChatColor.BOLD+" added for "+ChatColor.BOLD+ timeAmount + timeUnit +ChatColor.BOLD+ ".");
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.useCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.useCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
             if(!plugin.dataManager.useCode(playerUUID,code)){
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already used a code from that pool!");
             }
 
         } else {
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA +" Invalid or expired code.");
-            plugin.pluginLogger.info("Player "+sender+" used wrong or expired code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
+            pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+sender+" used wrong or expired code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
 
         }
         return true;
@@ -219,13 +221,13 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             String playerName = args[1];
             UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId(); // Używaj getOfflinePlayer zamiast getPlayer
             plugin.removePlayerRank(uuid);
-            plugin.pluginLogger.info("BetterRanksCommandHandler: onCommand: Player " + playerName + " removed");
+            pluginLogger.log(PluginLogger.LogLevel.INFO,"BetterRanksCommandHandler: onCommand: Player " + playerName + " removed");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
 
             sender.sendMessage("Rank removed successfully for player " + playerName);
             return true;
         }
-        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleDeleteCommand: sender " + sender + " dont have permission to use /br delete");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleDeleteCommand: sender " + sender + " dont have permission to use /br delete");
         return false;
     }
 
