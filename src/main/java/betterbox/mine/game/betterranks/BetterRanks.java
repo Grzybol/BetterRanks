@@ -98,10 +98,11 @@ public final class BetterRanks extends JavaPlugin {
     }
 
     void removePlayerRank(UUID playerUUID) {
-        pluginLogger.log(PluginLogger.LogLevel.INFO,"BetterRanks: removePlayerRank: called");
-        usersConfig.set("users." + playerUUID.toString() + ".group", "Player");
+        Player player = Bukkit.getPlayer(playerUUID);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: called");
+        usersConfig.set("users." + player.getName() + ".group", "Player");
         dataManager.removePlayerData(playerUUID);
-        pluginLogger.log(PluginLogger.LogLevel.INFO,"BetterRanks: removePlayerRank: Player " + playerUUID + " removed");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: Player " + player.getName() + " removed");
         try {
             usersConfig.save(usersFile);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank set successfully!");

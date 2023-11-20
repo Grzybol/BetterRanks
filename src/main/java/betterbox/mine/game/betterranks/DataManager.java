@@ -280,8 +280,9 @@ public class DataManager {
 
     // Remove the data for the given UUID.
     public void removePlayerData(UUID uuid) {
+        Player player = Bukkit.getPlayer(uuid);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: called");
-        dataConfig.set(uuid.toString(), null);
+        dataConfig.set(player.getName(), null);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: calling DataManager.saveData()");
         saveData();
     }
