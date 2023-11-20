@@ -99,7 +99,7 @@ public final class BetterRanks extends JavaPlugin {
             pluginLogger.debug("BetterRanksCommandHandler: addPlayerRank called");
             // Get UUID from playerName
 
-            UUID playerUUID = Bukkit.getPlayer(playerName).getUniqueId();
+            UUID playerUUID = Bukkit.getOfflinePlayer(playerName).getUniqueId();
             pluginLogger.debug("BetterRanksCommandHandler: addPlayerRank: UID "+playerUUID);
             String currentRank = usersConfig.getString("users." + playerUUID + ".group");
             pluginLogger.debug("BetterRanksCommandHandler: addPlayerRank: currentRank "+currentRank);

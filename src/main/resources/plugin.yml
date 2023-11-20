@@ -8,32 +8,39 @@ commands:
   br:
     description: Manage player ranks and codes.
     usage: |
-      /<command> tl
-      /<command> code <code>
+      /br tl
+      /br code <code>
     aliases: [betranks, setrank]
   info:
     description: Plugin info.
+    aliases: [help, h]
   debug:
     description: Toggles debug
     permission: betterranks.command.debug
   add:
     usage:
-      /<command> add <player> <rank> <amount> <s/m/d>
+      /br add <player> <rank> <time_amount> <s/m/d>
     description: Add a rank to a player.
     permission: betterranks.command.add
   delete:
     usage:
-      /<command> delete <player>
+      /br delete <player>
     description: Delete a player's rank.
     permission: betterranks.command.delete
   createcode:
-    description: Create codes for ranks.
+    description: Create codes for ranks under given pool name. Each user can redeem only one code per pool.
+    usage:
+      /br createcode <quantity> <rank> <time_amount> <s/m/d> <pool_name>
     permission: betterranks.command.createcode
   code:
     description: Use a code.
+    usage:
+      /br code <code>
     permission: betterranks.command.code
   tl:
     description: Check remaining time.
+    usage:
+      /br tl
     permission: betterranks.command.tl
 
 permissions:
@@ -50,7 +57,7 @@ permissions:
     description: Allows creating codes for ranks.
     default: op
   betterranks.command.code:
-    description: Allows reedeming the code.
+    description: Allows redeeming the code.
     default: op
   betterranks.command.tl:
     description: Allows to check remaining time.

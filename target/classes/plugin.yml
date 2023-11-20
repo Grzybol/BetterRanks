@@ -50,7 +50,7 @@ permissions:
     description: Allows creating codes for ranks.
     default: op
   betterranks.command.code:
-    description: Allows reedeming the code.
+    description: Allows redeeming the code.
     default: op
   betterranks.command.tl:
     description: Allows to check remaining time.

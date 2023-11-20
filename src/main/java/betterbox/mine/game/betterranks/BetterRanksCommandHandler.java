@@ -6,15 +6,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 public class BetterRanksCommandHandler implements CommandExecutor {
 
-    private BetterRanks plugin = null;
+    private final BetterRanks plugin;
     public String poolName = null;
 
 
@@ -59,20 +59,30 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
     // Metody obsługujące różne podkomendy
     private boolean handleInfoCommand(CommandSender sender) {
+        plugin.pluginLogger.debug("BetterRanksCommandHandler: handleInfoCommand called");
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Better Ranks system for BetterBox.");
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Author: " + plugin.getDescription().getAuthors());
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Version: " + plugin.getDescription().getVersion());
+        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br code <code> " + ChatColor.GREEN + " - to use promo code");
+        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br tl " + ChatColor.GREEN + " - returns time left on your rank");
+
+        if(sender.isOp()){
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleInfoCommand: "+sender.getName()+" is OP "+sender.isOp());
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br delete <nick> " + ChatColor.GREEN + " - set player's rank to Player");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br add <nick> <rank> <time_amount> <s/m/d> " + ChatColor.GREEN + " - set player's rank for given time");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br createcode <quantity> <rank> <time_amount> <s/m/d> <pool_name> " + ChatColor.GREEN + " - create codes for ranks under given pool name. Each user can redeem only one code per pool.");
+        }
         return true;
     }
 
     private boolean handleTlCommand(CommandSender sender) {
         if(sender.hasPermission("betterranks.command.tl")){
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: /br tl called");
-            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: sender: " + sender + " sender.getName(): " + sender.getName() + " " + sender.toString());
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand called");
+            plugin.pluginLogger.debug("BetterRanksCommandHandler: handleTlCommand: sender: " + sender + " sender.getName(): " + sender.getName());
             if (sender.hasPermission("betterranks.command.tl")) {
                 UUID uuid = null;
                 try {
-                    uuid = Bukkit.getPlayer(sender.getName()).getUniqueId();
+                    uuid = Objects.requireNonNull(Bukkit.getPlayer(sender.getName())).getUniqueId();
                 } catch (Exception e) {
                     plugin.pluginLogger.error("BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
                 }
@@ -169,9 +179,9 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             int timeAmount = plugin.dataManager.getCodesConfig().getInt(code + ".timeAmount");
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: timeAmount "+timeAmount+" for code "+code);
             String timeUnitStr = plugin.dataManager.getCodesConfig().getString(code + ".timeUnit");
-            char timeUnit = timeUnitStr.charAt(0);; // Domyślna wartość, jeśli konwersja zawiedzie
+            char timeUnit; // Domyślna wartość, jeśli konwersja zawiedzie
             plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
-            if (timeUnitStr != null && timeUnitStr.length() == 1) {
+            if (timeUnitStr.length() == 1) {
                     timeUnit = timeUnitStr.charAt(0);
             } else {
                     plugin.pluginLogger.debug("BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format "+timeUnitStr);
@@ -200,9 +210,10 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
 
     private boolean handleDeleteCommand(CommandSender sender, String[] args) {
+
         if(sender.hasPermission("betterranks.command.delete")){
             String playerName = args[1];
-            UUID uuid = Bukkit.getPlayer(playerName).getUniqueId();
+            UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId(); // Używaj getOfflinePlayer zamiast getPlayer
             plugin.removePlayerRank(uuid);
             plugin.pluginLogger.info("BetterRanksCommandHandler: onCommand: Player " + playerName + " removed");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
@@ -213,4 +224,5 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         plugin.pluginLogger.debug("BetterRanksCommandHandler: handleDeleteCommand: sender " + sender + " dont have permission to use /br delete");
         return false;
     }
+
 }
