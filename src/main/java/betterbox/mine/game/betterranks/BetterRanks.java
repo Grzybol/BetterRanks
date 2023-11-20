@@ -70,7 +70,9 @@ public final class BetterRanks extends JavaPlugin {
     }
 
     private void checkRankExpiry() {
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: starting scheduled task");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry called");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.checkAndCleanUpPools()");
+        dataManager.checkAndCleanUpPools();
         Player player = null;
         boolean updated = false;
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: requesting all UUIDs");

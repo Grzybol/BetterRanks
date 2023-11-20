@@ -286,6 +286,40 @@ public class DataManager {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: calling DataManager.saveData()");
         saveData();
     }
+    public void checkAndCleanUpPools() {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: checkAndCleanUpPools: called");
+
+        // Przechodzimy przez wszystkich graczy w bazie danych
+        for (String playerName : dataConfig.getKeys(false)) {
+            String playerPath = playerName + ".usedPools";
+            if (dataConfig.contains(playerPath)) {
+                Set<String> usedPools = dataConfig.getConfigurationSection(playerPath).getKeys(false);
+
+                for (String pool : usedPools) {
+                    boolean poolHasCodes = false;
+
+                    // Sprawdzamy, czy jakiekolwiek kody z tego pool'a są jeszcze dostępne
+                    for (String code : codesConfig.getKeys(false)) {
+                        if (codesConfig.getString(code + ".pool").equals(pool)) {
+                            poolHasCodes = true;
+                            break;
+                        }
+                    }
+
+                    // Jeśli pool nie ma już dostępnych kodów, usuwamy go z listy użytych pooli gracza
+                    if (!poolHasCodes) {
+                        dataConfig.set(playerPath + "." + pool, null);
+                        pluginLogger.log(PluginLogger.LogLevel.INFO,"DataManager: checkAndCleanUpPools: No available codes in pool " + pool + " for player " + playerName + ". Pool removed.");
+                    }
+                }
+            }
+        }
+
+        // Zapisujemy zmiany w pliku konfiguracyjnym
+        saveData();
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: checkAndCleanUpPools: Data saved after pool cleanup");
+    }
+
 
     // Get all UUIDs stored in the database.
     public Set<String> getAllPlayerUUIDs() {
