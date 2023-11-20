@@ -195,7 +195,6 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnitStr);
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnitStr.charAt(0)+" pool "+plugin.dataManager.getPoolNameForCode(code));
-
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.canUseCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
             if(!plugin.dataManager.canUseCode(playerUUID,code)){
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already used a code from that pool!");
