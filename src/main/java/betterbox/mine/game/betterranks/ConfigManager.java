@@ -59,6 +59,7 @@ public class ConfigManager {
     public void ReloadConfig(){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: ReloadConfig called");
         // Odczytanie ustawień log_level z pliku konfiguracyjnego
+        configFile = new File(plugin.getDataFolder(), "config.yml");
         logLevels = plugin.getConfig().getStringList("log_level");
 
 
