@@ -282,10 +282,20 @@ public class DataManager {
     public void removePlayerData(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: called");
-        dataConfig.set(player.getName(), null);
+
+        // Sprawdź, czy gracz istnieje, aby uniknąć NullPointer Exception
+        if (player != null) {
+            // Ustaw wartość expiration na -1 dla danego gracza
+            dataConfig.set(player.getName() + ".expiration", -1);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: rank removed for player "+player.getName());
+        } else {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "[ERROR] DataManager: removePlayerData: Player not found for UUID: " + uuid);
+        }
+
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: calling DataManager.saveData()");
         saveData();
     }
+
     public void checkAndCleanUpPools() {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: checkAndCleanUpPools: called");
 
