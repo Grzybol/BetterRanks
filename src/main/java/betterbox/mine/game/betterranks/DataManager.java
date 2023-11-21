@@ -228,6 +228,7 @@ public class DataManager {
     }
 
     public void saveData() {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveData called");
         try {
             dataConfig.save(dataFile);
         } catch (IOException e) {
@@ -260,13 +261,15 @@ public class DataManager {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called, setting "+time+" for "+player.getName());
 
 
-        String playerPath = uuid.toString();
+        String playerPath = player.getName();
         String expirationPath = player.getName() + ".expiration";
 
         // Sprawdzenie, czy gracz już istnieje w bazie danych
         if (!dataConfig.contains(playerPath)) {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: database.yml doesn't contain "+player.getName()+". Creating new entry");
             // Jeśli gracz nie istnieje, tworzymy bazową strukturę
             dataConfig.createSection(playerPath);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: Entry for "+player.getName()+" created.");
             dataConfig.createSection(playerPath + ".usedPools"); // Pusta sekcja dla przyszłych pul kodów
         }
 

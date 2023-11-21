@@ -1,6 +1,7 @@
 package betterbox.mine.game.betterranks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -80,25 +81,24 @@ public final class BetterRanks extends JavaPlugin {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry called");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.checkAndCleanUpPools()");
         dataManager.checkAndCleanUpPools();
-        Player player = null;
         boolean updated = false;
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: requesting all UUIDs");
-        for (String uuidStr : dataManager.getAllPlayerUUIDs()) {
-            try{//pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: checking UUID "+uuidStr);
-                long expiryTime = dataManager.getExpiryTime(UUID.fromString(uuidStr));
-                //pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: expiry time for UUID "+expiryTime);
+        for (String playerName : dataManager.getAllPlayerUUIDs()) {
+            try {
+                // Zamiast UUID.fromString(uuidStr), użyj Bukkit.getOfflinePlayer(playerName)
+                OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+                long expiryTime = dataManager.getExpiryTime(player.getUniqueId());
 
                 if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
-                    player = Bukkit.getPlayer(uuidStr);
-                    pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + player.getName() + " expired, removing rank");
-                    removePlayerRank(UUID.fromString(uuidStr));
+                    pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
+                    removePlayerRank(player.getUniqueId());
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
                 }
-            }catch (Exception e)
-            {
-                pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: checkRankExpiry: "+e.getMessage());
+            } catch (Exception e) {
+                pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: " + e.getMessage());
             }
         }
+
     }
 
     void removePlayerRank(UUID playerUUID) {
