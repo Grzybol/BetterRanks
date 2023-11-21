@@ -339,7 +339,7 @@ public class DataManager {
 
 
     // Get all UUIDs stored in the database.
-    public Set<String> getAllPlayerUUIDs() {
+    public Set<String> getAllPlayerNicknamesFromDB() {
         return dataConfig.getKeys(false);
     }
 }

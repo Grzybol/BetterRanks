@@ -9,9 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public final class BetterRanks extends JavaPlugin {
 
@@ -78,12 +76,14 @@ public final class BetterRanks extends JavaPlugin {
     }
 
     private void checkRankExpiry() {
+        List<String> names = new ArrayList<>();
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry called");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.checkAndCleanUpPools()");
         dataManager.checkAndCleanUpPools();
         boolean updated = false;
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: requesting all UUIDs");
-        for (String playerName : dataManager.getAllPlayerUUIDs()) {
+        for (String playerName : dataManager.getAllPlayerNicknamesFromDB()) {
+            names.add(playerName);
             try {
                 // Zamiast UUID.fromString(uuidStr), użyj Bukkit.getOfflinePlayer(playerName)
                 OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
@@ -95,9 +95,12 @@ public final class BetterRanks extends JavaPlugin {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
                 }
             } catch (Exception e) {
-                pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: " + e.getMessage());
+
+                pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: " + e.getMessage()+". Player: "+playerName);
             }
         }
+        String wszystkieNicki = String.join(", ", names);
+        pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: Checked players: "+wszystkieNicki);
 
     }
 
