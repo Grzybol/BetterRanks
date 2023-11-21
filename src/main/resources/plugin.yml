@@ -44,6 +44,11 @@ commands:
     usage:
       /br tl
     permission: betterranks.command.tl
+  reload:
+    description: Reloads config gile
+    usage:
+      /br reload
+    permission: betterranks.command.reload
 
 permissions:
   betterranks.command.br:
@@ -67,4 +72,8 @@ permissions:
   betterranks.command.debug:
     description: Allows to toggle debug.
     default: op
+  betterranks.command.reload:
+    description: Reloads config file
+    default: op
+
 

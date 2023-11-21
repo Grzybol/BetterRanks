@@ -40,7 +40,7 @@ public final class BetterRanks extends JavaPlugin {
         dataManager = new DataManager(this, pluginLogger);
 
         // Set the command executor to the new command handler class
-        this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this,pluginLogger));
+        this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this,pluginLogger,configManager));
         pluginLogger.log(PluginLogger.LogLevel.INFO,"Plugin has been enabled!");
 
         // Load the users.yml file relative to the plugins directory

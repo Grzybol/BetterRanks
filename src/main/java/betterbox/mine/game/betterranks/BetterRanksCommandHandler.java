@@ -16,12 +16,14 @@ public class BetterRanksCommandHandler implements CommandExecutor {
     private final BetterRanks plugin;
     public String poolName = null;
     private final PluginLogger pluginLogger;
+    private final ConfigManager configManager;
 
 
-    public BetterRanksCommandHandler(BetterRanks plugin,PluginLogger pluginLogger) {
+    public BetterRanksCommandHandler(BetterRanks plugin,PluginLogger pluginLogger, ConfigManager configManager) {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler called");
         this.plugin = plugin;
         this.pluginLogger = pluginLogger;
+        this.configManager = configManager;
     }
 
     @Override
@@ -52,9 +54,22 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 return handleDeleteCommand(sender, args);
             case "add":
                 return handleAddCommand(sender, args);
+            case "reload":
+                return handleReloadCommand(sender);
+
             default:
                 sender.sendMessage("Invalid command usage. Check the command syntax.");
                 return true;
+        }
+    }
+    private boolean handleReloadCommand(CommandSender sender){
+        if(sender.hasPermission("betterranks.command.reload")){
+            configManager.ReloadConfig();
+            return true;
+        }else {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
+            sender.sendMessage("You don't have permission to use this command!");
+            return false;
         }
     }
 

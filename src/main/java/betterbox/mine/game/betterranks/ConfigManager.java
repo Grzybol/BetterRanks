@@ -12,6 +12,7 @@ public class ConfigManager {
     private final PluginLogger pluginLogger;
     private File configFile = null;
     List<String> logLevels = null;
+    Set<PluginLogger.LogLevel> enabledLogLevels;
 
     public ConfigManager(JavaPlugin plugin, PluginLogger pluginLogger) {
 
@@ -36,7 +37,7 @@ public class ConfigManager {
         }
         // Odczytanie ustawień log_level z pliku konfiguracyjnego
         logLevels = plugin.getConfig().getStringList("log_level");
-        Set<PluginLogger.LogLevel> enabledLogLevels;
+
         if (logLevels == null || logLevels.isEmpty()) {
             // Jeśli konfiguracja nie określa poziomów logowania, użyj domyślnych ustawień
             enabledLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
@@ -53,6 +54,10 @@ public class ConfigManager {
                 }
             }
         }
+        ReloadConfig();
+    }
+    public void ReloadConfig(){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: ReloadConfig called");
         // Odczytanie ustawień log_level z pliku konfiguracyjnego
         logLevels = plugin.getConfig().getStringList("log_level");
 
