@@ -1,5 +1,5 @@
 name: BetterRanks
-version: '4.3.7-SNAPSHOT'
+version: '4.3.9-SNAPSHOT'
 main: betterbox.mine.game.betterranks.BetterRanks
 api-version: '1.18'
 author: 'grzybol'

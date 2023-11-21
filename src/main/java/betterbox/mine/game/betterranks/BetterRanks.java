@@ -15,9 +15,11 @@ import java.util.UUID;
 public final class BetterRanks extends JavaPlugin {
 
     // Fields are made package-private or public to be accessible from the command handler
+    File dataFile;
     File usersFile;
     PluginLogger pluginLogger;
     FileConfiguration usersConfig;
+    FileConfiguration dataConfig;
     DataManager dataManager;
     ConfigManager configManager;
 
@@ -43,17 +45,22 @@ public final class BetterRanks extends JavaPlugin {
         pluginLogger.log(PluginLogger.LogLevel.INFO,"Plugin has been enabled!");
 
         // Load the users.yml file relative to the plugins directory
+        dataFile = new File(getDataFolder(), "database.yml");
+        dataConfig = YamlConfiguration.loadConfiguration(dataFile);
         usersFile = new File(getDataFolder().getParentFile(), "GroupManager/worlds/world/users.yml");
         if (!usersFile.exists()) {
+            pluginLogger.log(PluginLogger.LogLevel.WARNING,"No GroupManager users.yml file detected, creating a new one..");
             try {
+
                 usersFile.getParentFile().mkdirs();
                 usersFile.createNewFile();
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: GroupManager users.yml file created.");
             } catch (IOException e) {
                 e.printStackTrace();
                 pluginLogger.log(PluginLogger.LogLevel.ERROR,"Could not create users.yml: " + e.getMessage());
             }
         }
-        usersConfig = YamlConfiguration.loadConfiguration(usersFile);
+        usersConfig = YamlConfiguration.loadConfiguration(dataFile);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: starting scheduler");
         // Load data from DataManager
         dataManager.reloadData();
@@ -85,16 +92,6 @@ public final class BetterRanks extends JavaPlugin {
                 player = Bukkit.getPlayer(uuidStr);
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: "+player.getName()+ " expired, removing rank");
                 removePlayerRank(UUID.fromString(uuidStr));
-                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: changing users.yml GroupManager file");
-                updated = true;
-            }
-        }
-
-        if (updated) {
-            try {
-                usersConfig.save(usersFile);
-            } catch (IOException e) {
-                pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: checkRankExpiry: "+e);
             }
         }
     }
@@ -102,17 +99,10 @@ public final class BetterRanks extends JavaPlugin {
     void removePlayerRank(UUID playerUUID) {
         Player player = Bukkit.getPlayer(playerUUID);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: called");
-        usersConfig.set("users." + player.getName() + ".group", "Player");
         dataManager.removePlayerData(playerUUID);
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: Player " + player.getName() + " removed");
-        try {
-            usersConfig.save(usersFile);
-            pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank set successfully!");
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: Player " + player.getName() + " removed from database.yml");
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manudel "+player.getName());
 
-        } catch (IOException e) {
-            pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: removePlayerRank: "+e);
-        }
     }
 
     void addPlayerRank(String playerName, String rank, int time, char timeUnit) {
@@ -159,8 +149,6 @@ public final class BetterRanks extends JavaPlugin {
                 // Update the player's rank
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manuadd "+playerName+" "+rank+" world");
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank + " world");
-                //usersConfig.set("users." + playerUUID + ".group", rank);
-                // Uncomment the line below if you wish to use the 'manuadd' command
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
 
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
@@ -181,12 +169,13 @@ public final class BetterRanks extends JavaPlugin {
     public void onDisable() {
         // Save the users file
         try {
-            usersConfig.save(usersFile);
+            dataConfig.save(dataFile);
         } catch (IOException e) {
             pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: onDisable: " + e.getMessage());
         }
 
         // Save data to DataManager
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onDisable: calling dataManager.saveData()" );
         dataManager.saveData();
     }
 }
