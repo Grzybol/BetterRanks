@@ -1,6 +1,7 @@
 package betterbox.mine.game.betterranks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -245,12 +246,15 @@ public class DataManager {
 
     // Get the expiry time for the given UUID. Returns -1 if not set.
     public long getExpiryTime(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: called with parameters "+uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 
         String expirationPath = player.getName() + ".expiration";
         if (dataConfig.contains(expirationPath)) {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration "+expirationPath+" for player "+player.getName());
             return dataConfig.getLong(expirationPath);
         }
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration -1 for player "+player.getName());
         return -1; // Zwraca -1, jeśli czas wygaśnięcia nie jest ustawiony
     }
 
@@ -340,6 +344,7 @@ public class DataManager {
 
     // Get all UUIDs stored in the database.
     public Set<String> getAllPlayerNicknamesFromDB() {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getAllPlayerNicknamesFromDB called");
         return dataConfig.getKeys(false);
     }
 }

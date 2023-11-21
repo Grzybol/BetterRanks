@@ -81,22 +81,27 @@ public final class BetterRanks extends JavaPlugin {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.checkAndCleanUpPools()");
         dataManager.checkAndCleanUpPools();
         boolean updated = false;
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: requesting all UUIDs");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.getAllPlayerNicknamesFromDB()");
+
         for (String playerName : dataManager.getAllPlayerNicknamesFromDB()) {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: now checking "+playerName+" from database");
             names.add(playerName);
             try {
                 // Zamiast UUID.fromString(uuidStr), użyj Bukkit.getOfflinePlayer(playerName)
                 OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling dataManager.getExpiryTime(player.getUniqueId()) with parameters "+player.getUniqueId()+" Player name: "+player.getName());
                 long expiryTime = dataManager.getExpiryTime(player.getUniqueId());
 
                 if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
                     pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
+                    pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling removePlayerRank(player.getUniqueId())");
                     removePlayerRank(player.getUniqueId());
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
                 }
             } catch (Exception e) {
 
-                pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: " + e.getMessage()+". Player: "+playerName);
+                pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: Loop exception: " + e.getMessage()+". Player: "+playerName);
             }
         }
         String wszystkieNicki = String.join(", ", names);

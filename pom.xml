@@ -6,7 +6,7 @@
 
     <groupId>betterbox.mine.game</groupId>
     <artifactId>BetterRanks</artifactId>
-    <version>4.3.15-SNAPSHOT</version> <!-- Statyczna wartość wersji -->
+    <version>4.3.17-SNAPSHOT</version> <!-- Statyczna wartość wersji -->
     <packaging>jar</packaging>
 
     <name>BetterRanks</name>
