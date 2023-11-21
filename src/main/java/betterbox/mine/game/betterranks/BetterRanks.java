@@ -89,6 +89,7 @@ public final class BetterRanks extends JavaPlugin {
             try {
                 // Zamiast UUID.fromString(uuidStr), użyj Bukkit.getOfflinePlayer(playerName)
                 OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+                //UUID.fromString()
 
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling dataManager.getExpiryTime(player.getUniqueId()) with parameters "+player.getUniqueId()+" Player name: "+player.getName());
                 long expiryTime = dataManager.getExpiryTime(player.getUniqueId());
@@ -105,7 +106,7 @@ public final class BetterRanks extends JavaPlugin {
             }
         }
         String wszystkieNicki = String.join(", ", names);
-        pluginLogger.log(PluginLogger.LogLevel.ERROR, "BetterRanks: checkRankExpiry: Checked players: "+wszystkieNicki);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: Checked players: "+wszystkieNicki);
 
     }
 

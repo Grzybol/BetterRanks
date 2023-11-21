@@ -248,6 +248,7 @@ public class DataManager {
     public long getExpiryTime(UUID uuid) {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: called with parameters "+uuid);
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: player "+player.getName());
 
         String expirationPath = player.getName() + ".expiration";
         if (dataConfig.contains(expirationPath)) {
