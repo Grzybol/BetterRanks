@@ -43,16 +43,6 @@ public class ConfigManager {
             enabledLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
             updateConfig("log_level:\n  - INFO\n  - WARNING\n  - ERROR");
 
-        } else {
-            enabledLogLevels = new HashSet<>();
-            for (String level : logLevels) {
-                try {
-                    enabledLogLevels.add(PluginLogger.LogLevel.valueOf(level.toUpperCase()));
-                } catch (IllegalArgumentException e) {
-                    // Jeśli podano nieprawidłowy poziom logowania, zaloguj błąd
-                    plugin.getServer().getLogger().warning("Invalid log level in config: " + level);
-                }
-            }
         }
         ReloadConfig();
     }
@@ -61,7 +51,15 @@ public class ConfigManager {
         // Odczytanie ustawień log_level z pliku konfiguracyjnego
         configFile = new File(plugin.getDataFolder(), "config.yml");
         logLevels = plugin.getConfig().getStringList("log_level");
-
+        enabledLogLevels = new HashSet<>();
+        for (String level : logLevels) {
+            try {
+                enabledLogLevels.add(PluginLogger.LogLevel.valueOf(level.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Jeśli podano nieprawidłowy poziom logowania, zaloguj błąd
+                plugin.getServer().getLogger().warning("Invalid log level in config: " + level);
+            }
+        }
 
         // Ustawienie aktywnych poziomów logowania w loggerze
         pluginLogger.setEnabledLogLevels(enabledLogLevels);
