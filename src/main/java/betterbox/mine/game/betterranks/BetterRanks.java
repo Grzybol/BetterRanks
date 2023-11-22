@@ -125,8 +125,6 @@ public final class BetterRanks extends JavaPlugin {
     void addPlayerRank(String playerName, String rank, int time, char timeUnit) {
         try {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank called");
-            // Get UUID from playerName
-
             UUID playerUUID = Bukkit.getOfflinePlayer(playerName).getUniqueId();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: UID "+playerUUID);
             FileConfiguration usersConfig;
@@ -153,19 +151,15 @@ public final class BetterRanks extends JavaPlugin {
 
             long expiryTime = System.currentTimeMillis();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: checking if player has a rank");
-            // Check if player already has the same rank
             if (rank.equals(currentRank)) {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: Player "+playerName+" already has "+rank+" rank, extending for next "+additionalTime);
                 long currentExpiryTime = dataManager.getExpiryTime(playerUUID);
-                // Extend the expiry time if the player already has the rank
                 expiryTime = Math.max(expiryTime, currentExpiryTime) + additionalTime;
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: extended");
             } else {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: Player has a different rank, overriding. Additional Time "+additionalTime);
-                // If the player has a different rank, set new expiry time
                 expiryTime += additionalTime;
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: new expiryTime "+expiryTime);
-                // Update the player's rank
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manuadd "+playerName+" "+rank+" world");
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank + " world");
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
@@ -174,7 +168,6 @@ public final class BetterRanks extends JavaPlugin {
 
             }
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime);
-            // Set or update the expiry time in DataManager
             dataManager.setExpiryTime(playerUUID, expiryTime);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank "+rank+" updated successfully for " + playerName);
         } catch (Exception e) {
@@ -186,14 +179,11 @@ public final class BetterRanks extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Save the users file
         try {
             dataConfig.save(dataFile);
         } catch (IOException e) {
             pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: onDisable: " + e.getMessage());
         }
-
-        // Save data to DataManager
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onDisable: calling dataManager.saveData()" );
         dataManager.saveData();
     }

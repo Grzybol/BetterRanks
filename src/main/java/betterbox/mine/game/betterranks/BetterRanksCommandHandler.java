@@ -161,17 +161,17 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         if(sender.hasPermission("betterranks.command.createcode")) {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCreateCodeCommand called by " + sender.getName() + " " + Arrays.toString(args));
             try {
-                int numberOfCodes = Integer.parseInt(args[1]);
+                String maxUsers = args[1];
                 String rank = args[2];
                 int timeAmount = Integer.parseInt(args[3]);
                 char timeUnit = args[4].charAt(0); // s for seconds, m for minutes, d for days
                 poolName = args[5];
 
-                plugin.dataManager.generateCodes(numberOfCodes, rank, timeAmount, timeUnit, poolName);
-                sender.sendMessage("Generated " + numberOfCodes + " codes successfully.");
+                plugin.dataManager.generateCodes(Integer.parseInt(maxUsers), rank, timeAmount, timeUnit, poolName);
+                sender.sendMessage("Generated " + plugin.dataManager.getCodeFromPool(poolName)+ " code successfully.");
                 return true;
             } catch (NumberFormatException e) {
-                sender.sendMessage("Invalid number format. Usage: /br createcode <number_of_codes> <rank> <amount_of_time> <time_unit> "+e.getMessage());
+                sender.sendMessage("Invalid number format. Usage: /br createcode <maxUsers> <rank> <amount_of_time> <time_unit> "+e.getMessage());
                 return true;
             }
         }
@@ -190,31 +190,30 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             // Pobierz szczegóły kodu
             String playerName = sender.getName();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: playerName "+playerName+" for code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
-
-            String rank = plugin.dataManager.getCodesConfig().getString(code + ".rank");
-
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: rank "+rank+" for code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
-            int timeAmount = plugin.dataManager.getCodesConfig().getInt(code + ".timeAmount");
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: timeAmount "+timeAmount+" for code "+code);
-            String timeUnitStr = plugin.dataManager.getCodesConfig().getString(code + ".timeUnit");
+            String rank = plugin.dataManager.getCodesConfig().getString( plugin.dataManager.getPoolNameForCode(code)+ ".rank");
+            int timeAmount = plugin.dataManager.getCodesConfig().getInt(plugin.dataManager.getPoolNameForCode(code) + ".timeAmount");
+            String timeUnitStr = plugin.dataManager.getCodesConfig().getString(plugin.dataManager.getPoolNameForCode(code) + ".timeUnit");
+            String maxUsers = plugin.dataManager.getCodesConfig().getString(plugin.dataManager.getPoolNameForCode(code) + ".maxUsers");
+            String currentUsers = plugin.dataManager.getCodesConfig().getString(plugin.dataManager.getPoolNameForCode(code) + ".currentUsers");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler> handleCodeUsageCommand> rank: "+rank+" timeAmount: "+timeAmount+" timeUnit: "+timeUnitStr+" maxUsers: "+maxUsers+" currentUsers: "+currentUsers);
             char timeUnit; // Domyślna wartość, jeśli konwersja zawiedzie
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
+            //pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling plugin.dataManager.checkCode(code) "+ code);
             if (timeUnitStr.length() == 1) {
                     timeUnit = timeUnitStr.charAt(0);
             } else {
-                    pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format "+timeUnitStr);
+                    pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanksCommandHandler: handleCodeUsageCommand: Invalid time unit format in config "+timeUnitStr);
                     throw new IllegalArgumentException("Invalid time unit format");
 
 
             }
 
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: timeUnit "+timeUnitStr);
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: Player " + playerName + " , rank: "+rank+" , time: "+timeAmount+" , unit: "+timeUnitStr.charAt(0)+" pool "+plugin.dataManager.getPoolNameForCode(code));
+
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling dataManager.canUseCode(code) "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code));
             if(!plugin.dataManager.canUseCode(playerUUID,code)){
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already used a code from that pool!");
                 return false;
             }else{
+                //int maxUsers = plugin.dataManager.getCodesConfig().getInt(plugin.dataManager.getPoolNameForCode(code) + ".maxUsers");
                 pluginLogger.log(PluginLogger.LogLevel.INFO,"Code "+code+" from pool "+plugin.dataManager.getPoolNameForCode(code)+" used successfully by "+playerName+ ". Rank " + rank + " added/extended for next " + timeAmount + timeUnitStr.charAt(0) + ".");
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code used successfully. Rank "+ ChatColor.BOLD + rank +ChatColor.BOLD+" added for "+ChatColor.BOLD+ timeAmount + timeUnit +ChatColor.BOLD+ ".");
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleCodeUsageCommand: calling addPlayerRank with parameters "+playerName+","+rank+","+timeAmount+","+timeUnitStr.charAt(0));

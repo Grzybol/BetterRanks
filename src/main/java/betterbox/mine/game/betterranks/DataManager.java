@@ -108,6 +108,7 @@ public class DataManager {
         codesConfig = YamlConfiguration.loadConfiguration(codesFile);
     }
     public String getPoolNameForCode(String code) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getPoolNameForCode called");
         if (codesConfig.contains(code)) {
             return codesConfig.getString(code + ".pool");
         }
@@ -115,30 +116,37 @@ public class DataManager {
     }
 
     // Generate and store unique codes
-    public void generateCodes(int numberOfCodes, String rank, int timeAmount, char timeUnit, String poolName) {
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: generateCodes called with parameters: "+numberOfCodes+" "+rank+" "+timeAmount+" "+timeUnit+" "+poolName);
-        for (int i = 0; i < numberOfCodes; i++) {
-            String code;
-            do {
-                code = generateRandomCode(8);
-            } while (codesConfig.contains(code));
-
-            codesConfig.set(code + ".pool", poolName);
-            codesConfig.set(code + ".rank", rank);
-            codesConfig.set(code + ".timeAmount", timeAmount);
-            codesConfig.set(code + ".timeUnit", String.valueOf(timeUnit));
-        }
+    public void generateCodes(int maxUsers,String rank, int timeAmount, char timeUnit, String poolName) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: generateCodes called with parameters: "+rank+" "+timeAmount+" "+timeUnit+" "+poolName);
+        String code;
+        code = generateRandomCode(8);
+        codesConfig.set(poolName + ".code", code);
+        codesConfig.set(poolName + ".rank", rank);
+        codesConfig.set(poolName + ".timeAmount", timeAmount);
+        codesConfig.set(poolName + ".timeUnit", String.valueOf(timeUnit));
+        codesConfig.set(poolName + ".maxUsers", maxUsers);
+        codesConfig.set(poolName + ".currentUsers", "0");
+        codesConfig.set(poolName + ".users", null);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: generateCodes: calling saveCodes()");
         saveCodes();
+    }
+    public String getCodeFromPool(String poolName){
+        if (codesConfig.contains(poolName)) {
+            return codesConfig.getString(poolName+ ".code");
+        }
+        return null; // Zwróć null, jeśli kod nie istnieje
     }
 
 
 
     private String generateRandomCode(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String numbers = "1234567890";
         StringBuilder code = new StringBuilder();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length-1; i++) {
             code.append(characters.charAt(random.nextInt(characters.length())));
         }
+        code.append(characters.charAt(random.nextInt(numbers.length())));
         return code.toString();
     }
     public FileConfiguration getCodesConfig() {
@@ -160,32 +168,37 @@ public class DataManager {
         Player player = Bukkit.getPlayer(playerUuid);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: canUseCode called");
 
-        poolName = codesConfig.getString(code + ".pool");
+        poolName = getPoolNameForCode(code);
 
         // Sprawdzamy, czy gracz już użył kodu z tej pule
-        usedPoolsPath = player.getName() + ".usedPools." + poolName;
-        if (dataConfig.contains(usedPoolsPath)) {
-            pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
+        usedPoolsPath = poolName+".currentUsers."+player.getName();
+        if (codesConfig.contains(usedPoolsPath)) {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
             return false; // Gracz już użył kodu z tej pule
         }
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: canUseCode true");
         return true;
     }
     public boolean useCode(UUID playerUuid, String code) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode called with parameters "+playerUuid+" "+code);
         if (codesConfig.contains(code)) {
 
-            pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool");
-            // Usuwamy kod po użyciu
-            codesConfig.set(code, null);
 
-            // Dodajemy informację, że gracz użył kodu z tej pule
-            dataConfig.set(usedPoolsPath, true);
-
+            usedPoolsPath = getPoolNameForCode(code)+".users."+getOnlinePlayerNameByUUID(playerUuid);
+            codesConfig.set(usedPoolsPath,true);
+            int currentUsers = getCodesConfig().getInt(getPoolNameForCode(code) + ".currentUsers");
+            int maxUsers = getCodesConfig().getInt(getPoolNameForCode(code) + ".maxUsers");
+            if(currentUsers+1>maxUsers){
+                pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool. Current users: "+currentUsers+", max users "+maxUsers );
+                pluginLogger.log(PluginLogger.LogLevel.WARNING,"MAX USES REACHED! DELETING THE CODE FROM POOL "+getPoolNameForCode(code));
+                codesConfig.set(poolName, null);
+            }else{
+                pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool. Current users: "+currentUsers+", max users "+maxUsers );
+                codesConfig.set(poolName+".currentUsers",currentUsers+1);
+            }
             // Zapisujemy zmiany
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveCodes()");
             saveCodes();
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveData()");
-            saveData();
             return true;
         }
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleAddCommand: playerUuid " + playerUuid + " used wrong code "+code);
