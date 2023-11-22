@@ -93,6 +93,8 @@ public final class BetterRanks extends JavaPlugin {
 
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling dataManager.getExpiryTime(player.getUniqueId()) with parameters "+player.getUniqueId()+" Player name: "+player.getName());
                 long expiryTime = dataManager.getExpiryTime(player.getUniqueId());
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "BetterRanks: checkRankExpiry: expiryTime "+expiryTime);
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "BetterRanks: checkRankExpiry: time left: "+(expiryTime-System.currentTimeMillis()));
 
                 if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
                     pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
@@ -111,8 +113,9 @@ public final class BetterRanks extends JavaPlugin {
     }
 
     void removePlayerRank(UUID playerUUID) {
-        Player player = Bukkit.getPlayer(playerUUID);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: called");
+        Player player = Bukkit.getPlayer(playerUUID);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: calling dataManager.removePlayerData(playerUUID);");
         dataManager.removePlayerData(playerUUID);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: Player " + player.getName() + " removed from database.yml");
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manudel "+player.getName());

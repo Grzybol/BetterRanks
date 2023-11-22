@@ -70,9 +70,10 @@ public class PluginLogger {
     }
 
     // Metoda do ustawiania aktywnych poziomów logowania
-    public void setEnabledLogLevels(Set<LogLevel> enabledLogLevels) {
+    public void setEnabledLogLevels(Set<LogLevel> configEnabledLogLevels) {
+        this.enabledLogLevels = configEnabledLogLevels;
         log("Enabled Log levels "+ Arrays.toString(enabledLogLevels.toArray()));
-        this.enabledLogLevels = enabledLogLevels;
+
     }
 
 

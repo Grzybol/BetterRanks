@@ -18,7 +18,6 @@ public class ConfigManager {
 
         this.plugin = plugin;
         this.pluginLogger = pluginLogger;
-        configFile = new File(plugin.getDataFolder(), "config.yml");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager called");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: calling configureLogger");
         configureLogger();
@@ -26,6 +25,7 @@ public class ConfigManager {
 
     private void configureLogger() {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: configureLogger called");
+        configFile = new File(plugin.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             pluginLogger.log(PluginLogger.LogLevel.WARNING, "Config file does not exist, creating new one.");
             try {
@@ -35,31 +35,35 @@ public class ConfigManager {
                 throw new RuntimeException(e);
             }
         }
-        // Odczytanie ustawień log_level z pliku konfiguracyjnego
-        logLevels = plugin.getConfig().getStringList("log_level");
-
-        if (logLevels == null || logLevels.isEmpty()) {
-            // Jeśli konfiguracja nie określa poziomów logowania, użyj domyślnych ustawień
-            enabledLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
-            updateConfig("log_level:\n  - INFO\n  - WARNING\n  - ERROR");
-
-        }
         ReloadConfig();
     }
     public void ReloadConfig(){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: ReloadConfig called");
         // Odczytanie ustawień log_level z pliku konfiguracyjnego
         configFile = new File(plugin.getDataFolder(), "config.yml");
+        plugin.reloadConfig();
         logLevels = plugin.getConfig().getStringList("log_level");
         enabledLogLevels = new HashSet<>();
+        if (logLevels == null || logLevels.isEmpty()) {
+            pluginLogger.log(PluginLogger.LogLevel.ERROR,"ConfigManager: ReloadConfig: no config file or no configured log levels! Saving default settings.");
+            // Jeśli konfiguracja nie określa poziomów logowania, użyj domyślnych ustawień
+            enabledLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
+            updateConfig("log_level:\n  - INFO\n  - WARNING\n  - ERROR");
+
+        }
+
         for (String level : logLevels) {
             try {
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"ConfigManager: ReloadConfig: adding "+level.toUpperCase());
                 enabledLogLevels.add(PluginLogger.LogLevel.valueOf(level.toUpperCase()));
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"ConfigManager: ReloadConfig: current log levels: "+ Arrays.toString(enabledLogLevels.toArray()));
+
             } catch (IllegalArgumentException e) {
                 // Jeśli podano nieprawidłowy poziom logowania, zaloguj błąd
                 plugin.getServer().getLogger().warning("Invalid log level in config: " + level);
             }
         }
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: ReloadConfig: calling pluginLogger.setEnabledLogLevels(enabledLogLevels) with parameters: "+ Arrays.toString(enabledLogLevels.toArray()));
 
         // Ustawienie aktywnych poziomów logowania w loggerze
         pluginLogger.setEnabledLogLevels(enabledLogLevels);
