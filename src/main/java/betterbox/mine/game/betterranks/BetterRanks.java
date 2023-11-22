@@ -114,7 +114,7 @@ public final class BetterRanks extends JavaPlugin {
 
     void removePlayerRank(UUID playerUUID) {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: called");
-        Player player = Bukkit.getPlayer(playerUUID);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: calling dataManager.removePlayerData(playerUUID);");
         dataManager.removePlayerData(playerUUID);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: Player " + player.getName() + " removed from database.yml");
