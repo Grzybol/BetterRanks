@@ -274,9 +274,9 @@ public class DataManager {
 
 
     // Set the expiry time for the given UUID.
-    public void setExpiryTime(UUID uuid, long time) {
+    public void setExpiryTime(UUID uuid, long time, String rank) {
         Player player = Bukkit.getPlayer(uuid);
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called, setting "+time+" for "+player.getName());
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called with parameters "+time+" "+player.getName()+" "+rank);
 
 
         String playerPath = player.getName();
@@ -288,12 +288,13 @@ public class DataManager {
             // Jeśli gracz nie istnieje, tworzymy bazową strukturę
             dataConfig.createSection(playerPath);
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: Entry for "+player.getName()+" created.");
-            dataConfig.createSection(playerPath + ".usedPools"); // Pusta sekcja dla przyszłych pul kodów
+            dataConfig.createSection(playerPath+".rank");
+
         }
 
         // Ustawienie lub aktualizacja czasu wygaśnięcia
         dataConfig.set(expirationPath, time);
-
+        dataConfig.set(playerPath+".rank" ,rank);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: calling DataManager.saveData()");
         saveData();
     }

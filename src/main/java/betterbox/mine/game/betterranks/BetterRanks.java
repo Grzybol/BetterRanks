@@ -168,7 +168,7 @@ public final class BetterRanks extends JavaPlugin {
 
             }
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime);
-            dataManager.setExpiryTime(playerUUID, expiryTime);
+            dataManager.setExpiryTime(playerUUID, expiryTime, rank);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank "+rank+" updated successfully for " + playerName);
         } catch (Exception e) {
             pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanks: addPlayerRank: " + e.getMessage());
