@@ -79,8 +79,8 @@ public final class BetterRanks extends JavaPlugin {
         List<String> names = new ArrayList<>();
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry called");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.checkAndCleanUpPools()");
-        dataManager.checkAndCleanUpPools();
-        boolean updated = false;
+        //dataManager.checkAndCleanUpPools();
+        //boolean updated = false;
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling dataManager.getAllPlayerNicknamesFromDB()");
 
         for (String playerName : dataManager.getAllPlayerNicknamesFromDB()) {
