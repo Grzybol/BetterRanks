@@ -1,5 +1,7 @@
 BetterRanks
 
+!!!REQUIRES GroupManager to work!!!
+
 Overview
 BetterRanks is a versatile plugin for Bukkit-based Minecraft servers, offering a dynamic ranking system. It allows server administrators to manage player ranks effectively, using various commands and integrating a unique code system for rank promotions.
 
