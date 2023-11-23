@@ -187,7 +187,7 @@ public class DataManager {
         poolName = getPoolNameForCode(code);
 
         // Sprawdzamy, czy gracz już użył kodu z tej pule
-        usedPoolsPath = poolName+".currentUsers."+player.getName();
+        usedPoolsPath = poolName+".users."+player.getName();
         if (codesConfig.contains(usedPoolsPath)) {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
             return false; // Gracz już użył kodu z tej pule
@@ -201,13 +201,14 @@ public class DataManager {
             codesConfig.set(usedPoolsPath,true);
             int currentUsers = getCodesConfig().getInt(getPoolNameForCode(code) + ".currentUsers");
             int maxUsers = getCodesConfig().getInt(getPoolNameForCode(code) + ".maxUsers");
-            if(currentUsers+1>maxUsers){
+            if(currentUsers+1==maxUsers){
                 pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool. Current users: "+currentUsers+", max users "+maxUsers );
                 pluginLogger.log(PluginLogger.LogLevel.WARNING,"MAX USES REACHED! DELETING THE CODE FROM POOL "+getPoolNameForCode(code));
                 codesConfig.set(poolName, null);
             }else{
-                pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool. Current users: "+currentUsers+", max users "+maxUsers );
                 codesConfig.set(poolName+".currentUsers",currentUsers+1);
+                pluginLogger.log(PluginLogger.LogLevel.INFO,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" used a code "+code+" from "+getPoolNameForCode(code)+" pool. Current users: "+currentUsers+"."+(currentUsers+1)+", max users "+maxUsers );
+
             }
             // Zapisujemy zmiany
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveCodes()");
