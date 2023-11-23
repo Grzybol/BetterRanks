@@ -108,10 +108,16 @@ public class DataManager {
         codesConfig = YamlConfiguration.loadConfiguration(codesFile);
     }
     public String getPoolNameForCode(String code) {
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getPoolNameForCode called");
-        if (codesConfig.contains(code)) {
-            return codesConfig.getString(code + ".pool");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "DataManager: getPoolNameForCode called");
+
+        // Przejście przez wszystkie klucze w konfiguracji
+        for (String poolName : codesConfig.getKeys(false)) {
+            // Sprawdzenie, czy dany pool zawiera kod
+            if (codesConfig.contains(poolName + ".code") && codesConfig.getString(poolName + ".code").equals(code)) {
+                return poolName; // Zwrócenie nazwy poola, jeśli znaleziono kod
+            }
         }
+
         return null; // Zwróć null, jeśli kod nie istnieje
     }
 
@@ -153,8 +159,17 @@ public class DataManager {
         return codesConfig;
     }
     public boolean checkCode(String code) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "DataManager: containsCode called");
 
-        return codesConfig.contains(code);
+        // Iteracja przez wszystkie poolName w konfiguracji
+        for (String poolName : codesConfig.getKeys(false)) {
+            // Sprawdzenie, czy dany pool zawiera podany kod
+            if (codesConfig.contains(poolName + ".code") && codesConfig.getString(poolName + ".code").equals(code)) {
+                return true; // Zwróć true, jeśli znaleziono kod
+            }
+        }
+
+        return false; // Zwróć false, jeśli kod nie został znaleziony
     }
     public String getOnlinePlayerNameByUUID(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
