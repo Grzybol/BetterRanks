@@ -129,7 +129,7 @@ public final class BetterRanks extends JavaPlugin {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: UID "+playerUUID);
             FileConfiguration usersConfig;
             usersConfig = YamlConfiguration.loadConfiguration(dataFile);
-            String currentRank = usersConfig.getString("users." + playerUUID + ".group");
+            String currentRank = usersConfig.getString("users." + playerUUID + ".rank");
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: currentRank "+currentRank);
             long additionalTime;
             switch (timeUnit) {
