@@ -197,9 +197,6 @@ public class DataManager {
     }
     public boolean useCode(UUID playerUuid, String code) {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode called with parameters "+playerUuid+" "+code);
-        if (codesConfig.contains(code)) {
-
-
             usedPoolsPath = getPoolNameForCode(code)+".users."+getOnlinePlayerNameByUUID(playerUuid);
             codesConfig.set(usedPoolsPath,true);
             int currentUsers = getCodesConfig().getInt(getPoolNameForCode(code) + ".currentUsers");
@@ -216,9 +213,6 @@ public class DataManager {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: useCode: calling saveCodes()");
             saveCodes();
             return true;
-        }
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleAddCommand: playerUuid " + playerUuid + " used wrong code "+code);
-        return false; // Kod nie istnieje
     }
 
 
