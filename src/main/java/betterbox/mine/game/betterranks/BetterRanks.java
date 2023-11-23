@@ -19,6 +19,7 @@ public final class BetterRanks extends JavaPlugin {
     PluginLogger pluginLogger;
 
     FileConfiguration dataConfig;
+    FileConfiguration gmUsersConfig;
     DataManager dataManager;
     ConfigManager configManager;
 
@@ -59,7 +60,7 @@ public final class BetterRanks extends JavaPlugin {
                 pluginLogger.log(PluginLogger.LogLevel.ERROR,"Could not create users.yml: " + e.getMessage());
             }
         }
-
+        gmUsersConfig = YamlConfiguration.loadConfiguration(usersFile);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: onEnable: starting scheduler");
         // Load data from DataManager
         dataManager.reloadData();
@@ -122,16 +123,21 @@ public final class BetterRanks extends JavaPlugin {
 
 
     }
-
+    public String getCurrentRank(OfflinePlayer player){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: getCurrentRank called with parameters "+player);
+        FileConfiguration gmUsersConfig;
+        gmUsersConfig = YamlConfiguration.loadConfiguration(usersFile);
+        String currentRank =gmUsersConfig.getString("users." + player.getUniqueId() + ".group");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: getCurrentRank return "+currentRank);
+        return currentRank;
+    }
     void addPlayerRank(String playerName, String rank, int time, char timeUnit) {
         try {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank called");
             UUID playerUUID = Bukkit.getOfflinePlayer(playerName).getUniqueId();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: UID "+playerUUID);
-            FileConfiguration usersConfig;
-            usersConfig = YamlConfiguration.loadConfiguration(dataFile);
-            String currentRank = usersConfig.getString("users." + playerUUID + ".rank");
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: currentRank "+currentRank);
+
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: currentRank "+getCurrentRank(Bukkit.getOfflinePlayer(playerName)));
             long additionalTime;
             switch (timeUnit) {
                 case 's':
@@ -152,7 +158,7 @@ public final class BetterRanks extends JavaPlugin {
 
             long expiryTime = System.currentTimeMillis();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: checking if player has a rank");
-            if (rank.equals(currentRank)) {
+            if (rank.equals(getCurrentRank(Bukkit.getOfflinePlayer(playerName)))) {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: Player "+playerName+" already has "+rank+" rank, extending for next "+additionalTime);
                 long currentExpiryTime = dataManager.getExpiryTime(playerUUID);
                 expiryTime = Math.max(expiryTime, currentExpiryTime) + additionalTime;

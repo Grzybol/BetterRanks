@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -188,6 +189,12 @@ public class BetterRanksCommandHandler implements CommandExecutor {
 
         if (plugin.dataManager.checkCode(code)) {
             Player player = (Player) sender;
+            String rankFromCode = plugin.dataManager.getCodesConfig().getString(plugin.dataManager.getPoolNameForCode(code) + ".rank");
+
+            if (isCurrentRankHigher(player, rankFromCode)) {
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already have a higher or equal rank.");
+                return true;
+            }
             UUID playerUUID = player.getUniqueId();
             // Pobierz szczegóły kodu
             String playerName = sender.getName();
@@ -230,7 +237,27 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         }
         return true;
     }
+    private boolean isCurrentRankHigher(Player player, String newRank) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: isCurrentRankHigher called with parameters "+player.getName()+" "+newRank);
+        String currentRank = plugin.getCurrentRank(player);
+        Map<Integer, String> hierarchy = configManager.getRankHierarchy();
 
+        // Znajdź pozycje obecnej rangi i nowej rangi w hierarchii
+        int currentRankPosition = hierarchy.entrySet().stream()
+                .filter(entry -> entry.getValue().equalsIgnoreCase(currentRank))
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(-1); // -1, jeśli ranga nie została znaleziona
+
+        int newRankPosition = hierarchy.entrySet().stream()
+                .filter(entry -> entry.getValue().equalsIgnoreCase(newRank))
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(-1);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: isCurrentRankHigher called with parameters "+player.getName()+" new rank: "+currentRankPosition+" old rank: "+newRankPosition);
+        // Porównanie pozycji rang
+        return currentRankPosition > newRankPosition;
+    }
 
     private boolean handleDeleteCommand(CommandSender sender, String[] args) {
 
