@@ -114,10 +114,11 @@ public class DataManager {
         for (String poolName : codesConfig.getKeys(false)) {
             // Sprawdzenie, czy dany pool zawiera kod
             if (codesConfig.contains(poolName + ".code") && codesConfig.getString(poolName + ".code").equals(code)) {
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG, "DataManager: getPoolNameForCode: Pool found for code "+code+" "+poolName);
                 return poolName; // Zwrócenie nazwy poola, jeśli znaleziono kod
             }
         }
-
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "DataManager: getPoolNameForCode: no pool found for code "+code);
         return null; // Zwróć null, jeśli kod nie istnieje
     }
 
@@ -131,8 +132,8 @@ public class DataManager {
         codesConfig.set(poolName + ".timeAmount", timeAmount);
         codesConfig.set(poolName + ".timeUnit", String.valueOf(timeUnit));
         codesConfig.set(poolName + ".maxUsers", maxUsers);
-        codesConfig.set(poolName + ".currentUsers", "0");
-        codesConfig.set(poolName + ".users", null);
+        codesConfig.set(poolName + ".currentUsers", 0);
+        codesConfig.createSection(poolName + ".users");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: generateCodes: calling saveCodes()");
         saveCodes();
     }
@@ -323,7 +324,7 @@ public class DataManager {
         // Sprawdź, czy gracz istnieje, aby uniknąć NullPointer Exception
         if (player != null) {
             // Ustaw wartość expiration na -1 dla danego gracza
-            dataConfig.set(player.getName() + ".expiration", -1);
+            dataConfig.set(player.getName(), null);
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: removePlayerData: rank removed for player "+player.getName());
         } else {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG, "[ERROR] DataManager: removePlayerData: Player not found for UUID: " + uuid);

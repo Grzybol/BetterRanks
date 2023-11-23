@@ -120,6 +120,7 @@ public final class BetterRanks extends JavaPlugin {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: removePlayerRank: Player " + player.getName() + " removed from database.yml");
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manudel "+player.getName());
 
+
     }
 
     void addPlayerRank(String playerName, String rank, int time, char timeUnit) {
