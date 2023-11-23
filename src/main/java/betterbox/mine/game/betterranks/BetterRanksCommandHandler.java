@@ -65,10 +65,11 @@ public class BetterRanksCommandHandler implements CommandExecutor {
     private boolean handleReloadCommand(CommandSender sender){
         if(sender.hasPermission("betterranks.command.reload")){
             configManager.ReloadConfig();
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " BetterRanks config reloaded!");
             return true;
         }else {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
-            sender.sendMessage("You don't have permission to use this command!");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You don't have permission to use this command!");
             return false;
         }
     }
@@ -168,6 +169,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 poolName = args[5];
 
                 plugin.dataManager.generateCodes(Integer.parseInt(maxUsers), rank, timeAmount, timeUnit, poolName);
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Code "+ChatColor.GOLD + "" + ChatColor.DARK_RED +plugin.dataManager.getCodeFromPool(poolName)+" "+ ChatColor.AQUA + " created successfully.");
                 sender.sendMessage("Generated " + plugin.dataManager.getCodeFromPool(poolName)+ " code successfully.");
                 return true;
             } catch (NumberFormatException e) {

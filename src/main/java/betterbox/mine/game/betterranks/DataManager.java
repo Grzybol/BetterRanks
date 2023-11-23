@@ -153,7 +153,7 @@ public class DataManager {
         for (int i = 0; i < length-1; i++) {
             code.append(characters.charAt(random.nextInt(characters.length())));
         }
-        code.append(characters.charAt(random.nextInt(numbers.length())));
+        code.append(numbers.charAt(random.nextInt(numbers.length())));
         return code.toString();
     }
     public FileConfiguration getCodesConfig() {
