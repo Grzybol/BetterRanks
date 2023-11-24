@@ -180,6 +180,7 @@ public class DataManager {
             return null; // Gracz nie jest online lub nie istnieje
         }
     }
+
     public boolean canUseCode(UUID playerUuid, String code){
         Player player = Bukkit.getPlayer(playerUuid);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: canUseCode called");
@@ -189,6 +190,7 @@ public class DataManager {
         // Sprawdzamy, czy gracz już użył kodu z tej pule
         usedPoolsPath = poolName+".users."+player.getName();
         if (codesConfig.contains(usedPoolsPath)) {
+
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"Player "+getOnlinePlayerNameByUUID(playerUuid)+" already used a code "+code+" from "+getPoolNameForCode(code)+" pool");
             return false; // Gracz już użył kodu z tej pule
         }
