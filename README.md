@@ -40,13 +40,13 @@ log_level:
   - DEBUG_LVL2
 ###################################
 groups:
-  1: Player
-  2: VIP
-  3: MVP
-  4: PRO
-  5: GOD
-  6: Helper
-  7: Owner
+- 1: Player
+- 2: VIP
+- 3: MVP
+- 4: PRO
+- 5: GOD
+- 6: Helper
+- 7: Owner
 
 # Additional configurations
 Usage
