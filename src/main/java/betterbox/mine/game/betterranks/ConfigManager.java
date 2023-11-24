@@ -92,24 +92,28 @@ public class ConfigManager {
         pluginLogger.setEnabledLogLevels(enabledLogLevels);
     }
     public Map<Integer, String> getRankHierarchy() {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "ConfigManager: getRankHierarchy called");
         return rankHierarchy;
     }
 
 
     private void generateDefaultRankHierarchy() {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "ConfigManager: generateDefaultRankHierarchy called");
         Map<Integer, String> defaultHierarchy = new LinkedHashMap<>();
         defaultHierarchy.put(1, "Player");
         defaultHierarchy.put(2, "VIP");
         // ... dodaj resztę rang
-
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "ConfigManager: generateDefaultRankHierarchy: calling updateRankHierarchy(defaultHierarchy) "+defaultHierarchy);
         updateRankHierarchy(defaultHierarchy); // Aktualizacja pliku config.yml
     }
     public void updateRankHierarchy(Map<Integer, String> rankMap) {
         StringBuilder hierarchyConfig = new StringBuilder("groups:\n");
         for (Map.Entry<Integer, String> entry : rankMap.entrySet()) {
-            hierarchyConfig.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-        }
 
+            hierarchyConfig.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "ConfigManager: updateRankHierarchy: hierarchyConfig "+hierarchyConfig);
+        }
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "ConfigManager: updateRankHierarchy: calling updateConfig(hierarchyConfig.toString()) "+hierarchyConfig);
         updateConfig(hierarchyConfig.toString());
         pluginLogger.log(PluginLogger.LogLevel.INFO, "Rank hierarchy updated successfully.");
     }
@@ -117,6 +121,7 @@ public class ConfigManager {
 
 
     public void updateConfig(String configuration) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "ConfigManager: updateConfig called with parameters "+ configuration);
         try {
             List<String> lines = Files.readAllLines(Paths.get(configFile.toURI()));
 
