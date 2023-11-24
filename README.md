@@ -1,4 +1,4 @@
-BetterRanks Plugin for Minecraft
+BetterRanks Plugin for Minecraft - Spigot 1.18.2+
 
 !!!REQUIRES GroupManager to work!!!
 Overview
@@ -27,16 +27,27 @@ betterranks.info: Allows access to the /br info command. Provides general inform
 - betterranks.createcode: Allows the creation of promo codes through the /br createcode command.
 
 
-The plugin is highly configurable through the config.yml file. You can set logging levels, default ranks, and other important settings.
+The plugin is highly configurable through the config.yml file. You can set logging levels and groups hierarchy.
 
 Sample Configuration:
 
-yaml
-Copy code
+###################################
 log_level:
   - INFO
   - WARNING
   - ERROR
+  - DEBUG
+  - DEBUG_LVL2
+###################################
+groups:
+  1: Player
+  2: VIP
+  3: MVP
+  4: PRO
+  5: GOD
+  6: Helper
+  7: Owner
+
 # Additional configurations
 Usage
 Commands
