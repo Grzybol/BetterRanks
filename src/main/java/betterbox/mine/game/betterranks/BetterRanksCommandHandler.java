@@ -192,7 +192,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             String rankFromCode = plugin.dataManager.getCodesConfig().getString(plugin.dataManager.getPoolNameForCode(code) + ".rank");
 
             if (isCurrentRankHigher(player, rankFromCode)) {
-                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already have a higher or equal rank.");
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.DARK_RED +"You already have a higher rank.");
                 return true;
             }
             UUID playerUUID = player.getUniqueId();
@@ -254,9 +254,13 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 .findFirst()
                 .map(Map.Entry::getKey)
                 .orElse(-1);
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: isCurrentRankHigher called with parameters "+player.getName()+" new rank: "+currentRankPosition+" old rank: "+newRankPosition);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: isCurrentRankHigher: "+player.getName()+" new rank: "+currentRankPosition+" old rank: "+newRankPosition);
         // Porównanie pozycji rang
-        return currentRankPosition > newRankPosition;
+        if (currentRankPosition > newRankPosition){
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: isCurrentRankHigher: return true ");
+            return true;
+        }
+        return false;
     }
 
     private boolean handleDeleteCommand(CommandSender sender, String[] args) {
