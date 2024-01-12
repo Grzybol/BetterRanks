@@ -90,6 +90,7 @@ public final class BetterRanks extends JavaPlugin {
             try {
                 // Zamiast UUID.fromString(uuidStr), użyj Bukkit.getOfflinePlayer(playerName)
                 OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+                UUID uuid = Bukkit.getPlayerUniqueId(playerName);
                 //UUID.fromString()
 
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling dataManager.getExpiryTime(player.getUniqueId()) with parameters "+player.getUniqueId()+" Player name: "+player.getName());
@@ -99,6 +100,10 @@ public final class BetterRanks extends JavaPlugin {
 
                 if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
                     pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
+                    long oldExpiration = dataManager.getOldExpiration(uuid);
+                    if(oldExpiration>System.currentTimeMillis()){
+                        dataManager.setExpiryTime(Bukkit.getPlayerUniqueId(playerName),oldExpiration, dataManager.getOldRank(uuid));
+                    }
                     pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling removePlayerRank(player.getUniqueId())");
                     removePlayerRank(player.getUniqueId());
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
@@ -155,12 +160,13 @@ public final class BetterRanks extends JavaPlugin {
                 default:
                     throw new IllegalArgumentException("Invalid time unit: " + timeUnit);
             }
-
+            long currentExpiryTime=0;
             long expiryTime = System.currentTimeMillis();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: checking if player has a rank");
-            if (rank.equals(getCurrentRank(Bukkit.getOfflinePlayer(playerName)))) {
+            String currentRank = getCurrentRank(Bukkit.getOfflinePlayer(playerName));
+            if (rank.equals(currentRank)) {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: Player "+playerName+" already has "+rank+" rank, extending for next "+additionalTime);
-                long currentExpiryTime = dataManager.getExpiryTime(playerUUID);
+                currentExpiryTime = dataManager.getExpiryTime(playerUUID);
                 expiryTime = Math.max(expiryTime, currentExpiryTime) + additionalTime;
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: extended");
             } else {
@@ -170,11 +176,13 @@ public final class BetterRanks extends JavaPlugin {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manuadd "+playerName+" "+rank+" world");
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank + " world");
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
-
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
-
             }
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime);
+            if(!(currentRank=="Player"||currentRank==null)&&currentExpiryTime>expiryTime){
+                dataManager.saveOldRank(playerUUID, currentExpiryTime, currentRank);
+            }
+
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
             dataManager.setExpiryTime(playerUUID, expiryTime, rank);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank "+rank+" updated successfully for " + playerName);
         } catch (Exception e) {

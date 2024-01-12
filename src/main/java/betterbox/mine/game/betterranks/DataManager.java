@@ -284,7 +284,22 @@ public class DataManager {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration -1 for player "+player.getName());
         return -1; // Zwraca -1, jeśli czas wygaśnięcia nie jest ustawiony
     }
+    public long getOldExpiration(UUID uuid){
+            return dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
+    }
+    public String getOldRank(UUID uuid){
+        return dataConfig.getString(Bukkit.getPlayer(uuid).getName()+".oldRank");
+    }
+    public void saveOldRank(UUID uuid, long expiration, String rank){
+        Player player = Bukkit.getPlayer(uuid);
+        if (!dataConfig.contains(player.getName() + ".oldExpiration")) {
+            dataConfig.createSection(player.getName() + ".oldExpiration");
+        }
+        dataConfig.set(player.getName() +".oldExpiration", expiration);
+        dataConfig.set(player.getName() +".oldRank" ,rank);
 
+
+    }
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time, String rank) {
