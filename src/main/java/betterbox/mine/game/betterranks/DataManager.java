@@ -294,6 +294,7 @@ public class DataManager {
         Player player = Bukkit.getPlayer(uuid);
         if (!dataConfig.contains(player.getName() + ".oldExpiration")) {
             dataConfig.createSection(player.getName() + ".oldExpiration");
+            dataConfig.createSection(player.getName() + ".oldRank");
         }
         dataConfig.set(player.getName() +".oldExpiration", expiration);
         dataConfig.set(player.getName() +".oldRank" ,rank);
