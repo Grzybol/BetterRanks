@@ -284,7 +284,32 @@ public class DataManager {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration -1 for player "+player.getName());
         return -1; // Zwraca -1, jeśli czas wygaśnięcia nie jest ustawiony
     }
+    public long getOldExpiration(UUID uuid){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration called with parameters "+uuid);
+        long oldExpiration = dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration: oldExpiration: "+oldExpiration);
+        return oldExpiration;
+    }
+    public String getOldRank(UUID uuid){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldRank called with parameters "+uuid);
+        String oldRank = dataConfig.getString(Bukkit.getPlayer(uuid).getName()+".oldRank");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldRank: oldRank: "+oldRank);
+        return oldRank;
+    }
+    public void saveOldRank(UUID uuid, long expiration, String rank){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank called with parameters uuid: "+uuid+" expiration: "+expiration+" rank: "+rank);
+        Player player = Bukkit.getPlayer(uuid);
+        if (!dataConfig.contains(player.getName() + ".oldExpiration")) {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank: Creating oldExpiration and oldRank for player "+player.getName());
+            dataConfig.createSection(player.getName() + ".oldExpiration");
+            dataConfig.createSection(player.getName() + ".oldRank");
+        }
+        dataConfig.set(player.getName() +".oldExpiration", expiration);
+        dataConfig.set(player.getName() +".oldRank" ,rank);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank: oldRank "+rank+" oldExpiration "+expiration+" set,calling saveData");
+        saveData();
 
+    }
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time, String rank) {
