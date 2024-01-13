@@ -285,10 +285,16 @@ public class DataManager {
         return -1; // Zwraca -1, jeśli czas wygaśnięcia nie jest ustawiony
     }
     public long getOldExpiration(UUID uuid){
-            return dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration called with parameters "+uuid);
+        long oldExpiration = dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration: oldExpiration: "+oldExpiration);
+        return oldExpiration;
     }
     public String getOldRank(UUID uuid){
-        return dataConfig.getString(Bukkit.getPlayer(uuid).getName()+".oldRank");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldRank called with parameters "+uuid);
+        String oldRank = dataConfig.getString(Bukkit.getPlayer(uuid).getName()+".oldRank");
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldRank: oldRank: "+oldRank);
+        return oldRank;
     }
     public void saveOldRank(UUID uuid, long expiration, String rank){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank called with parameters uuid: "+uuid+" expiration: "+expiration+" rank: "+rank);

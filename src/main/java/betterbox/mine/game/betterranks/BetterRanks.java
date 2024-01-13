@@ -99,9 +99,14 @@ public final class BetterRanks extends JavaPlugin {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "BetterRanks: checkRankExpiry: time left: "+(expiryTime-System.currentTimeMillis()));
 
                 if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
+                    pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: Rank expired for "+playerName);
                     long oldExpiration = dataManager.getOldExpiration(uuid);
                     if(oldExpiration>System.currentTimeMillis()){
-                        dataManager.setExpiryTime(uuid,oldExpiration, dataManager.getOldRank(uuid));
+                        String oldRank= dataManager.getOldRank(uuid);
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: oldRank "+oldRank+" is still valid for player "+playerName);
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling /manuadd "+playerName+" "+oldRank+" world");
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + oldRank + " world");
+                        dataManager.setExpiryTime(uuid,oldExpiration, oldRank);
                     }else {
                         pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
                         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "BetterRanks: checkRankExpiry: calling removePlayerRank(player.getUniqueId())");
