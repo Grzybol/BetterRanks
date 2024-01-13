@@ -90,7 +90,7 @@ public final class BetterRanks extends JavaPlugin {
             try {
                 // Zamiast UUID.fromString(uuidStr), użyj Bukkit.getOfflinePlayer(playerName)
                 OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-                UUID uuid = Bukkit.getPlayerUniqueId(playerName);
+                UUID uuid = player.getUniqueId();
                 //UUID.fromString()
 
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling dataManager.getExpiryTime(player.getUniqueId()) with parameters "+player.getUniqueId()+" Player name: "+player.getName());
@@ -99,14 +99,15 @@ public final class BetterRanks extends JavaPlugin {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "BetterRanks: checkRankExpiry: time left: "+(expiryTime-System.currentTimeMillis()));
 
                 if (expiryTime != -1 && System.currentTimeMillis() > expiryTime) {
-                    pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
                     long oldExpiration = dataManager.getOldExpiration(uuid);
                     if(oldExpiration>System.currentTimeMillis()){
-                        dataManager.setExpiryTime(Bukkit.getPlayerUniqueId(playerName),oldExpiration, dataManager.getOldRank(uuid));
+                        dataManager.setExpiryTime(uuid,oldExpiration, dataManager.getOldRank(uuid));
+                    }else {
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: checkRankExpiry: " + playerName + " expired, removing rank");
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2, "BetterRanks: checkRankExpiry: calling removePlayerRank(player.getUniqueId())");
+                        removePlayerRank(player.getUniqueId());
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
                     }
-                    pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling removePlayerRank(player.getUniqueId())");
-                    removePlayerRank(player.getUniqueId());
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
                 }
             } catch (Exception e) {
 
