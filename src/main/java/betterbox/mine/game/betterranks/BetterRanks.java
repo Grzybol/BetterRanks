@@ -176,14 +176,18 @@ public final class BetterRanks extends JavaPlugin {
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: new expiryTime "+expiryTime);
                 pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manuadd "+playerName+" "+rank+" world");
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + rank + " world");
-                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
-            }
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime);
-            if(!(currentRank=="Player"||currentRank==null)&&currentExpiryTime>expiryTime){
-                dataManager.saveOldRank(playerUUID, currentExpiryTime, currentRank);
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: new expiryTime "+expiryTime+" currentExpiryTime "+currentExpiryTime);
+                if(currentExpiryTime>expiryTime){
+                    pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: calling saveOldRank with parameters playerUUID: "+playerUUID+" currentExpiryTime: "+currentExpiryTime+" currentRank: "+currentRank);
+                    dataManager.saveOldRank(playerUUID, currentExpiryTime, currentRank);
+                }
+
             }
 
+
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime);
             dataManager.setExpiryTime(playerUUID, expiryTime, rank);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank "+rank+" updated successfully for " + playerName);
         } catch (Exception e) {

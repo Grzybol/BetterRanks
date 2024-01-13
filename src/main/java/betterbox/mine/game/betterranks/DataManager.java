@@ -291,14 +291,17 @@ public class DataManager {
         return dataConfig.getString(Bukkit.getPlayer(uuid).getName()+".oldRank");
     }
     public void saveOldRank(UUID uuid, long expiration, String rank){
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank called with parameters uuid: "+uuid+" expiration: "+expiration+" rank: "+rank);
         Player player = Bukkit.getPlayer(uuid);
         if (!dataConfig.contains(player.getName() + ".oldExpiration")) {
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank: Creating oldExpiration and oldRank for player "+player.getName());
             dataConfig.createSection(player.getName() + ".oldExpiration");
             dataConfig.createSection(player.getName() + ".oldRank");
         }
         dataConfig.set(player.getName() +".oldExpiration", expiration);
         dataConfig.set(player.getName() +".oldRank" ,rank);
-
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank: oldRank "+rank+" oldExpiration "+expiration+" set,calling saveData");
+        saveData();
 
     }
 
