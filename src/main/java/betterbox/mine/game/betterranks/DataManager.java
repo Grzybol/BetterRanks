@@ -287,7 +287,7 @@ public class DataManager {
     }
     public long getOldExpiration(UUID uuid){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration called with parameters "+uuid);
-        String player_name = Bukkit.getPlayer(uuid).getName();
+        String player_name = Bukkit.getOfflinePlayer(uuid).getName();
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration: Checking player "+player_name);
         long oldExpiration = 0;
         if (dataConfig.contains( player_name+ ".oldExpiration")) {
