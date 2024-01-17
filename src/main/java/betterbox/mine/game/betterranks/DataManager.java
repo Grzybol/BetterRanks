@@ -278,15 +278,21 @@ public class DataManager {
 
         String expirationPath = player.getName() + ".expiration";
         if (dataConfig.contains(expirationPath)) {
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration "+expirationPath+" for player "+player.getName());
-            return dataConfig.getLong(expirationPath);
+            long expiration = dataConfig.getLong(expirationPath);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration "+expiration+" for player "+player.getName());
+            return expiration;
         }
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getExpiryTime: Expiration -1 for player "+player.getName());
         return -1; // Zwraca -1, jeśli czas wygaśnięcia nie jest ustawiony
     }
     public long getOldExpiration(UUID uuid){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration called with parameters "+uuid);
-        long oldExpiration = dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
+        String player_name = Bukkit.getOfflinePlayer(uuid).getName();
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration: Checking player "+player_name);
+        long oldExpiration = 0;
+        if (dataConfig.contains( player_name+ ".oldExpiration")) {
+            oldExpiration = dataConfig.getLong(Bukkit.getPlayer(uuid).getName() + ".oldExpiration");
+        }
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration: oldExpiration: "+oldExpiration);
         return oldExpiration;
     }

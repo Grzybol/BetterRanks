@@ -103,8 +103,8 @@ public final class BetterRanks extends JavaPlugin {
                     long oldExpiration = dataManager.getOldExpiration(uuid);
                     if(oldExpiration>System.currentTimeMillis()){
                         String oldRank= dataManager.getOldRank(uuid);
-                        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: oldRank "+oldRank+" is still valid for player "+playerName);
-                        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanks: checkRankExpiry: calling /manuadd "+playerName+" "+oldRank+" world");
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: oldRank "+oldRank+" is still valid for player "+playerName);
+                        pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"BetterRanks: checkRankExpiry: calling /manuadd "+playerName+" "+oldRank+" world");
                         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manuadd " + playerName + " " + oldRank + " world");
                         dataManager.setExpiryTime(uuid,oldExpiration, oldRank);
                     }else {
