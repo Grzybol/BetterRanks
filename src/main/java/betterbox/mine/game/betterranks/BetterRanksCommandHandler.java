@@ -62,6 +62,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 sender.sendMessage("Invalid command usage. Check the command syntax.");
                 return true;
         }
+
     }
     private boolean handleReloadCommand(CommandSender sender){
         if(sender.hasPermission("betterranks.command.reload")){

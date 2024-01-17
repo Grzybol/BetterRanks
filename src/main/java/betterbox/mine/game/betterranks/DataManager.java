@@ -286,7 +286,8 @@ public class DataManager {
     }
     public long getOldExpiration(UUID uuid){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration called with parameters "+uuid);
-        long oldExpiration = dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
+        long oldExpiration = 0;
+        oldExpiration = dataConfig.getLong(Bukkit.getPlayer(uuid).getName()+".oldExpiration");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldExpiration: oldExpiration: "+oldExpiration);
         return oldExpiration;
     }
