@@ -298,13 +298,13 @@ public class DataManager {
     }
     public String getOldRank(UUID uuid){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldRank called with parameters "+uuid);
-        String oldRank = dataConfig.getString(Bukkit.getPlayer(uuid).getName()+".oldRank");
+        String oldRank = dataConfig.getString(Bukkit.getOfflinePlayer(uuid).getName()+".oldRank");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG_LVL2,"DataManager: getOldRank: oldRank: "+oldRank);
         return oldRank;
     }
     public void saveOldRank(UUID uuid, long expiration, String rank){
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank called with parameters uuid: "+uuid+" expiration: "+expiration+" rank: "+rank);
-        Player player = Bukkit.getPlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         if (!dataConfig.contains(player.getName() + ".oldExpiration")) {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: saveOldRank: Creating oldExpiration and oldRank for player "+player.getName());
             dataConfig.createSection(player.getName() + ".oldExpiration");
@@ -319,7 +319,7 @@ public class DataManager {
 
     // Set the expiry time for the given UUID.
     public void setExpiryTime(UUID uuid, long time, String rank) {
-        Player player = Bukkit.getPlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: setExpiryTime: called with parameters "+time+" "+player.getName()+" "+rank);
 
 

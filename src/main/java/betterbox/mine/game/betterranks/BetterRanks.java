@@ -135,14 +135,14 @@ public final class BetterRanks extends JavaPlugin {
 
     }
     public String getCurrentRank(OfflinePlayer player){
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: getCurrentRank called with parameters "+player);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: getCurrentRank called with parameters "+player.getName());
         FileConfiguration gmUsersConfig;
         gmUsersConfig = YamlConfiguration.loadConfiguration(usersFile);
         String currentRank =gmUsersConfig.getString("users." + player.getUniqueId() + ".group");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: getCurrentRank return "+currentRank);
         return currentRank;
     }
-    void addPlayerRank(String playerName, String rank, int time, char timeUnit) {
+    void  addPlayerRank(String playerName, String rank, int time, char timeUnit) {
         try {
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank called");
             UUID playerUUID = Bukkit.getOfflinePlayer(playerName).getUniqueId();
@@ -193,7 +193,7 @@ public final class BetterRanks extends JavaPlugin {
 
             pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling /manload");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "manload");
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime);
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: addPlayerRank: calling setExpiryTime with parameters: "+playerUUID+" "+expiryTime+" rank "+rank);
             dataManager.setExpiryTime(playerUUID, expiryTime, rank);
             pluginLogger.log(PluginLogger.LogLevel.INFO,"Rank "+rank+" updated successfully for " + playerName);
         } catch (Exception e) {
