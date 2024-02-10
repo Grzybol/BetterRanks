@@ -121,13 +121,12 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         return false;
     }
     private boolean handleTlCommand(CommandSender sender, String[] player) {
-        if(sender.hasPermission("betterranks.command.tlcheck")){
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand called");
-            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender: " + sender + " sender.getName(): " + sender.getName());
-            if (sender.hasPermission("betterranks.command.tlcheck")) {
+        if(sender.hasPermission("betterranks.command.checktl")){
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand called with parameters sender: "+sender.getName()+" checkedPlayer: "+player[1]);
+            if (sender.hasPermission("betterranks.command.checktl")) {
                 UUID uuid = null;
                 try {
-                    OfflinePlayer playercheck = Bukkit.getOfflinePlayer(player[0]);
+                    OfflinePlayer playercheck = Bukkit.getOfflinePlayer(player[1]);
                     uuid = Objects.requireNonNull(playercheck.getUniqueId());
                 } catch (Exception e) {
                     pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
