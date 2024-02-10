@@ -2,6 +2,7 @@ package betterbox.mine.game.betterranks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,6 +58,8 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 return handleAddCommand(sender, args);
             case "reload":
                 return handleReloadCommand(sender);
+            case "checktl":
+                return  handleTlCommand(sender, args);
 
             default:
                 sender.sendMessage("Invalid command usage. Check the command syntax.");
@@ -103,6 +106,28 @@ public class BetterRanksCommandHandler implements CommandExecutor {
                 UUID uuid = null;
                 try {
                     uuid = Objects.requireNonNull(Bukkit.getPlayer(sender.getName())).getUniqueId();
+                } catch (Exception e) {
+                    pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
+                }
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: calling getRemainingTimeFormatted with " + uuid);
+                sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks] " + ChatColor.AQUA + plugin.dataManager.getRemainingTimeFormatted(uuid));
+            } else {
+                pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
+                sender.sendMessage("You don't have permission to use this command!");
+            }
+            return true;
+        }
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand: sender " + sender + " dont have permission to use /br tl");
+        return false;
+    }
+    private boolean handleTlCommand(CommandSender sender, String[] player) {
+        if(sender.hasPermission("betterranks.command.checktl")){
+            pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleTlCommand called with parameters sender: "+sender.getName()+" checkedPlayer: "+player[1]);
+            if (sender.hasPermission("betterranks.command.checktl")) {
+                UUID uuid = null;
+                try {
+                    OfflinePlayer playercheck = Bukkit.getOfflinePlayer(player[1]);
+                    uuid = Objects.requireNonNull(playercheck.getUniqueId());
                 } catch (Exception e) {
                     pluginLogger.log(PluginLogger.LogLevel.ERROR,"BetterRanksCommandHandler: handleTlCommand: exception while converting username to UUID: " + e.getMessage() + " " + e);
                 }
