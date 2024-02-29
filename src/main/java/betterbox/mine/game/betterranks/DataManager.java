@@ -147,8 +147,8 @@ public class DataManager {
 
 
     private String generateRandomCode(int length) {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        String numbers = "1234567890";
+        String characters = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+        String numbers = "123456789";
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < length-1; i++) {
             code.append(characters.charAt(random.nextInt(characters.length())));
@@ -165,7 +165,7 @@ public class DataManager {
         // Iteracja przez wszystkie poolName w konfiguracji
         for (String poolName : codesConfig.getKeys(false)) {
             // Sprawdzenie, czy dany pool zawiera podany kod
-            if (codesConfig.contains(poolName + ".code") && codesConfig.getString(poolName + ".code").equals(code)) {
+            if (codesConfig.contains(poolName + ".code") && codesConfig.getString(poolName + ".code").equalsIgnoreCase(code)) {
                 return true; // Zwróć true, jeśli znaleziono kod
             }
         }
