@@ -46,6 +46,8 @@ public class BetterRanksCommandHandler implements CommandExecutor {
         switch (subCommand) {
             case "info":
                 return handleInfoCommand(sender);
+            case "help":
+                return handleInfoCommand(sender);
             case "tl":
                 return handleTlCommand(sender);
             case "code":
@@ -82,7 +84,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
     // Metody obsługujące różne podkomendy
     private boolean handleInfoCommand(CommandSender sender) {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"BetterRanksCommandHandler: handleInfoCommand called");
-        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Better Ranks system for BetterBox.");
+        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " BetterRanks plugin for BetterBox.top");
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Author: " + plugin.getDescription().getAuthors());
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " Version: " + plugin.getDescription().getVersion());
         sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br code <code> " + ChatColor.GREEN + " - to use promo code");
@@ -94,6 +96,7 @@ public class BetterRanksCommandHandler implements CommandExecutor {
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br add <nick> <rank> <time_amount> <s/m/d> " + ChatColor.GREEN + " - set player's rank for given time");
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br createcode <quantity> <rank> <time_amount> <s/m/d> <pool_name> " + ChatColor.GREEN + " - create codes for ranks under given pool name. Each user can redeem only one code per pool.");
             sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br reload " + ChatColor.GREEN + " - reloads config");
+            sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[BetterRanks]" + ChatColor.AQUA + " /br checktl <player>" + ChatColor.GREEN + " - return time left on player's rank.");
         }
         return true;
     }
