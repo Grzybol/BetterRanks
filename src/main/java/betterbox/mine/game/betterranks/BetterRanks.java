@@ -1,5 +1,6 @@
 package betterbox.mine.game.betterranks;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,6 +26,8 @@ public final class BetterRanks extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        int pluginId = 22750; // Zamień na rzeczywisty ID twojego pluginu na bStats
+        Metrics metrics = new Metrics(this, pluginId);
         try{
             Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
             pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels,this);
