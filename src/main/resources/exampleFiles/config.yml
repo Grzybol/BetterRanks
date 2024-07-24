@@ -1,0 +1,18 @@
+###################################
+log_level:
+  - INFO
+  - WARNING
+  - ERROR
+  #- DEBUG
+  #- DEBUG_LVL2
+###################################
+groups:
+  1: CHEATER
+  2: Player
+  3: VIP
+  4: MVP
+  5: PRO
+  6: GOD
+  7: Helper
+  8: Owner
+

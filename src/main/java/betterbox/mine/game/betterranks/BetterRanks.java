@@ -18,6 +18,7 @@ public final class BetterRanks extends JavaPlugin {
     File dataFile;
     File usersFile;
     PluginLogger pluginLogger;
+    String folderPath;
 
     FileConfiguration dataConfig;
     FileConfiguration gmUsersConfig;
@@ -26,8 +27,11 @@ public final class BetterRanks extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         int pluginId = 22750; // Zamień na rzeczywisty ID twojego pluginu na bStats
         Metrics metrics = new Metrics(this, pluginId);
+        folderPath =getDataFolder().getAbsolutePath();
+
         try{
             Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
             pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels,this);
@@ -36,7 +40,7 @@ public final class BetterRanks extends JavaPlugin {
             getServer().getLogger().warning("PluginLogger Exception: " + e.getMessage());
         }
         try{
-        configManager = new ConfigManager(this, pluginLogger);
+        configManager = new ConfigManager(this, pluginLogger, folderPath);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: onEnable: calling DataManager");
     }catch (Exception e){
         getServer().getLogger().warning("configManager Exception: " + e.getMessage());
