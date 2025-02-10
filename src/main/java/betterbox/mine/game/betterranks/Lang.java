@@ -69,6 +69,16 @@ public class Lang {
     private void setDefaultValues(FileConfiguration config) {
         config.set("currentBonusString", currentBonusString);
         config.set("noPermission", noPermission);
+        config.set("higherRank", higherRank);
+        config.set("poolAlreadyUsed", poolAlreadyUsed);
+        config.set("codeUsedSuccessfully", codeUsedSuccessfully);
+        config.set("invalidOrExpiredCode", invalidOrExpiredCode);
+        config.set("invalidCommand", invalidCommand);
+        config.set("timeLeftMessage", timeLeftMessage);
+        config.set("timeLeftHelpMessage", timeLeftHelpMessage);
+        config.set("noExpiryTmeSet", noExpiryTmeSet);
+        config.set("expired", expired);
+        config.set("rankExpiresIn", rankExpiresIn);
     }
 
     private void validateAndLoadConfig(FileConfiguration config, File langFile, String transactionID) {
@@ -87,6 +97,78 @@ public class Lang {
         } else {
             noPermission = config.getString("noPermission");
         }
+
+        if (!config.contains("higherRank")) {
+            config.set("higherRank", higherRank);
+            saveRequired = true;
+        } else {
+            higherRank = config.getString("higherRank");
+        }
+
+        if (!config.contains("poolAlreadyUsed")) {
+            config.set("poolAlreadyUsed", poolAlreadyUsed);
+            saveRequired = true;
+        } else {
+            poolAlreadyUsed = config.getString("poolAlreadyUsed");
+        }
+
+        if (!config.contains("codeUsedSuccessfully")) {
+            config.set("codeUsedSuccessfully", codeUsedSuccessfully);
+            saveRequired = true;
+        } else {
+            codeUsedSuccessfully = config.getString("codeUsedSuccessfully");
+        }
+
+        if (!config.contains("invalidOrExpiredCode")) {
+            config.set("invalidOrExpiredCode", invalidOrExpiredCode);
+            saveRequired = true;
+        } else {
+            invalidOrExpiredCode = config.getString("invalidOrExpiredCode");
+        }
+
+        if (!config.contains("invalidCommand")) {
+            config.set("invalidCommand", invalidCommand);
+            saveRequired = true;
+        } else {
+            invalidCommand = config.getString("invalidCommand");
+        }
+
+        if (!config.contains("timeLeftMessage")) {
+            config.set("timeLeftMessage", timeLeftMessage);
+            saveRequired = true;
+        } else {
+            timeLeftMessage = config.getString("timeLeftMessage");
+        }
+
+        if (!config.contains("timeLeftHelpMessage")) {
+            config.set("timeLeftHelpMessage", timeLeftHelpMessage);
+            saveRequired = true;
+        } else {
+            timeLeftHelpMessage = config.getString("timeLeftHelpMessage");
+        }
+
+        if (!config.contains("noExpiryTmeSet")) {
+            config.set("noExpiryTmeSet", noExpiryTmeSet);
+            saveRequired = true;
+        } else {
+            noExpiryTmeSet = config.getString("noExpiryTmeSet");
+        }
+
+        if (!config.contains("expired")) {
+            config.set("expired", expired);
+            saveRequired = true;
+        } else {
+            expired = config.getString("expired");
+        }
+
+        if (!config.contains("rankExpiresIn")) {
+            config.set("rankExpiresIn", rankExpiresIn);
+            saveRequired = true;
+        } else {
+            rankExpiresIn = config.getString("rankExpiresIn");
+        }
+
+
 
 
         if (saveRequired) {

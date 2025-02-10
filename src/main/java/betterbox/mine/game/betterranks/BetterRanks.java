@@ -39,6 +39,7 @@ public final class BetterRanks extends JavaPlugin {
         try{
             Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
             pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels,this);
+            loadElasticBuffer();
             pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: onEnable: calling ConfigManager");
         }catch (Exception e){
             getServer().getLogger().warning("PluginLogger Exception: " + e.getMessage());
