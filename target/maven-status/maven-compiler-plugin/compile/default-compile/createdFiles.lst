@@ -3,4 +3,5 @@ betterbox\mine\game\betterranks\DataManager.class
 betterbox\mine\game\betterranks\PluginLogger$LogLevel.class
 betterbox\mine\game\betterranks\ConfigManager.class
 betterbox\mine\game\betterranks\BetterRanks.class
+betterbox\mine\game\betterranks\Lang.class
 betterbox\mine\game\betterranks\PluginLogger.class

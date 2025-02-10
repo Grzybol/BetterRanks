@@ -4,6 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -16,7 +17,7 @@ public class ConfigManager {
     Set<PluginLogger.LogLevel> enabledLogLevels;
     private Map<Integer, String> rankHierarchy;
 
-    public ConfigManager(JavaPlugin plugin, PluginLogger pluginLogger) {
+    public ConfigManager(JavaPlugin plugin, PluginLogger pluginLogger, String folderPath) {
 
         this.plugin = plugin;
         this.pluginLogger = pluginLogger;
@@ -24,6 +25,19 @@ public class ConfigManager {
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager called");
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"ConfigManager: calling configureLogger");
         configureLogger();
+        CreateExampleConfigFile(folderPath);
+    }
+    private void CreateExampleConfigFile(String folderPath){
+        File exampleConfigFile = new File(folderPath, "config.yml");
+        try (InputStream in = plugin.getResource("exampleFiles/config.yml")) {
+            if (in == null) {
+                plugin.getLogger().severe("Resource 'customDropTables/spawners.yml not found.");
+                return;
+            }
+            Files.copy(in, exampleConfigFile.toPath());
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not save config.yml to " + exampleConfigFile + ": " + e.getMessage());
+        }
     }
 
     private void configureLogger() {

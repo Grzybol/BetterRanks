@@ -25,9 +25,11 @@ public class DataManager {
     private final Random random = new Random();
     public String poolName =null;
     String usedPoolsPath=null;
+    private final Lang lang;
 
-    public DataManager(JavaPlugin plugin,PluginLogger pluginLogger) {
+    public DataManager(JavaPlugin plugin,PluginLogger pluginLogger,Lang lang) {
         this.pluginLogger = pluginLogger;
+        this.lang = lang;
         pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager called");
         this.plugin = plugin;
 
@@ -35,18 +37,18 @@ public class DataManager {
         setup();
     }
     // Metoda, która zwraca pozostały czas dla danego UUID w formacie "xx d xx m xx s"
-    public String getRemainingTimeFormatted(UUID uuid) {
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getRemainingTimeFormatted: called UUID "+uuid);
+    public String getRemainingTimeFormatted(UUID uuid, String transactionID) {
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getRemainingTimeFormatted: called UUID "+uuid,transactionID);
         long expiryTime = getExpiryTime(uuid);
-        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getRemainingTimeFormatted: expiryTime " +expiryTime);
+        pluginLogger.log(PluginLogger.LogLevel.DEBUG,"DataManager: getRemainingTimeFormatted: expiryTime " +expiryTime,transactionID);
         if (expiryTime == -1) {
-            return "No expiry time set"; // Lub inną wiadomość wskazującą, że czas wygaśnięcia nie jest ustawiony
+            return lang.noExpiryTmeSet; // Lub inną wiadomość wskazującą, że czas wygaśnięcia nie jest ustawiony
 
         }
 
         long currentTime = System.currentTimeMillis();
         if (currentTime >= expiryTime) {
-            return "Expired"; // Lub inną wiadomość, jeśli czas wygaśnięcia już minął
+            return lang.expired; // Lub inną wiadomość, jeśli czas wygaśnięcia już minął
         }
 
         long remainingTime = expiryTime - currentTime;
@@ -69,7 +71,7 @@ public class DataManager {
             sb.append(seconds).append(" s");
         }
 
-        return "Rank expires in "+sb.toString().trim();
+        return lang.rankExpiresIn+sb.toString().trim();
     }
 
     public void setup() {

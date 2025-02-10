@@ -5,6 +5,7 @@ api-version: '1.18'
 author: 'grzybol'
 description: 'Plugin for managing ranks'
 depend: [GroupManager]
+softdepend: [ElasticBuffer]
 
 commands:
   br:

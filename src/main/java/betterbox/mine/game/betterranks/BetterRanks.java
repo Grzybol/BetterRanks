@@ -1,10 +1,14 @@
 package betterbox.mine.game.betterranks;
 
+import org.betterbox.elasticBuffer.ElasticBuffer;
+import org.betterbox.elasticBuffer.ElasticBufferAPI;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -17,14 +21,21 @@ public final class BetterRanks extends JavaPlugin {
     File dataFile;
     File usersFile;
     PluginLogger pluginLogger;
+    String folderPath;
 
     FileConfiguration dataConfig;
     FileConfiguration gmUsersConfig;
     DataManager dataManager;
     ConfigManager configManager;
+    private Lang lang;
 
     @Override
     public void onEnable() {
+
+        int pluginId = 22750; // Zamień na rzeczywisty ID twojego pluginu na bStats
+        Metrics metrics = new Metrics(this, pluginId);
+        folderPath =getDataFolder().getAbsolutePath();
+
         try{
             Set<PluginLogger.LogLevel> defaultLogLevels = EnumSet.of(PluginLogger.LogLevel.INFO, PluginLogger.LogLevel.DEBUG, PluginLogger.LogLevel.WARNING, PluginLogger.LogLevel.ERROR);
             pluginLogger = new PluginLogger(getDataFolder().getAbsolutePath(), defaultLogLevels,this);
@@ -33,15 +44,16 @@ public final class BetterRanks extends JavaPlugin {
             getServer().getLogger().warning("PluginLogger Exception: " + e.getMessage());
         }
         try{
-        configManager = new ConfigManager(this, pluginLogger);
+        configManager = new ConfigManager(this, pluginLogger, folderPath);
         pluginLogger.log(PluginLogger.LogLevel.DEBUG, "BetterRanks: onEnable: calling DataManager");
+        lang = new Lang(this, pluginLogger);
     }catch (Exception e){
         getServer().getLogger().warning("configManager Exception: " + e.getMessage());
     }
-        dataManager = new DataManager(this, pluginLogger);
+        dataManager = new DataManager(this, pluginLogger,lang);
 
         // Set the command executor to the new command handler class
-        this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this,pluginLogger,configManager));
+        this.getCommand("br").setExecutor(new BetterRanksCommandHandler(this,pluginLogger,configManager,lang));
         pluginLogger.log(PluginLogger.LogLevel.INFO,"Plugin has been enabled!");
 
         // Load the users.yml file relative to the plugins directory
@@ -74,6 +86,23 @@ public final class BetterRanks extends JavaPlugin {
         getLogger().info("Author: "+getDescription().getAuthors());
         getLogger().info("Version: "+getDescription().getVersion());
 
+    }
+    private void loadElasticBuffer(){
+        try{
+            PluginManager pm = Bukkit.getPluginManager();
+            try {
+                // Opóźnienie o 5 sekund, aby dać ElasticBuffer czas na pełną inicjalizację
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                pluginLogger.log(PluginLogger.LogLevel.WARNING, "[BetterElo] Initialization delay interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt(); // Przywrócenie statusu przerwania wątku
+            }
+            ElasticBuffer elasticBuffer = (ElasticBuffer) pm.getPlugin("ElasticBuffer");
+            pluginLogger.isElasticBufferEnabled=true;
+            pluginLogger.api= new ElasticBufferAPI(elasticBuffer);
+        }catch (Exception e){
+            pluginLogger.log(PluginLogger.LogLevel.ERROR, "ElasticBufferAPI instance found via ServicesManager, exception: "+e.getMessage());
+        }
     }
 
     private void checkRankExpiry() {
